@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <title>Вход — FlyTaxi</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- ВАЖНО: тоже абсолютные пути -->
+    <link rel="stylesheet" href="/assets/css/fonts.css">
+    <link rel="stylesheet" href="/assets/css/main.css">
+</head>
+<body class="page page--centered">
+
+<div class="login-box">
+    <h1 class="login-title">Авторизация</h1>
+
+    <form id="loginForm" class="login-form">
+        <input class="input" type="text" name="identifier" placeholder="Телефон или Email" required>
+        <input class="input" type="password" name="password" placeholder="Пароль" required>
+        <button class="btn btn--client" type="submit">Войти</button>
+    </form>
+
+    <p class="login-info" id="loginMessage"></p>
+
+    <div class="login-links">
+        <a class="login-back" href="register.html">Нет аккаунта? Зарегистрироваться</a>
+        <a class="login-back" href="forgot-password.html">Забыли пароль?</a>
+        <a class="login-back" href="/">← На главную</a>
+    </div>
+</div>
+
+<script>
+    const form = document.getElementById("loginForm");
+    const message = document.getElementById("loginMessage");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const data = {
+        identifier: form.identifier.value,
+        password: form.password.value,
+      };
+
+      message.textContent = "Загрузка...";
+      message.style.color = "#e5e7eb";
+
+      try {
+        const res = await fetch("/api/auth/login", {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify(data)
+        });
+
+        const json = await res.json();
+
+        if (!res.ok) {
+            let msg = json.error;
+
+            if (msg === "invalid credentials") {
+                msg = "Неверный логин или пароль";
+               }
+
+            message.textContent = msg || "Ошибка авторизации";
+            message.style.color = "#ef4444";
+            return;
+        }
+
+        message.textContent = "Успешный вход!";
+        message.style.color = "#22c55e";
+
+        // TODO: редирект в личный кабинет
+        // window.location.href = "/client/dashboard.html";
+
+      } catch (err) {
+        message.textContent = "Ошибка сети";
+        message.style.color = "#ef4444";
+      }
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <title>Админ-панель — FlyTaxi</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="/assets/css/fonts.css">
+    <link rel="stylesheet" href="/assets/css/main.css">
+</head>
+<body class="page page--centered">
+<div class="admin-layout">
+    <div class="admin-sidebar">
+        <h1 class="login-title">Заявки водителей</h1>
+        <div id="status" class="login-info"></div>
+        <ul id="driversList" class="admin-list"></ul>
+    </div>
+
+    <div class="admin-detail">
+        <h2 class="admin-detail__title">Детали заявки</h2>
+        <div id="detailContent" class="admin-detail__content">
+            <p class="login-info">Выберите заявку слева, чтобы увидеть подробности.</p>
+        </div>
+    </div>
+</div>
+
+<div class="login-links" style="margin-top: 16px;">
+    <a class="login-back" href="/">← На главную</a>
+</div>
+
+<script>
+    const statusEl = document.getElementById("status");
+    const listEl = document.getElementById("driversList");
+    const detailEl = document.getElementById("detailContent");
+
+    let currentDriverId = null;
+
+    async function loadDrivers() {
+      statusEl.textContent = "Загружаем заявки...";
+      statusEl.style.color = "#e5e7eb";
+      listEl.innerHTML = "";
+      detailEl.innerHTML = `<p class="login-info">Выберите заявку слева, чтобы увидеть подробности.</p>`;
+
+      try {
+        const res = await fetch("/api/admin/drivers/pending");
+        const json = await res.json();
+
+        if (!res.ok) {
+          statusEl.textContent = json.error || "Ошибка загрузки заявок";
+          statusEl.style.color = "#ef4444";
+          return;
+        }
+
+        const drivers = json.drivers || [];
+        if (drivers.length === 0) {
+          statusEl.textContent = "Нет неободобренных заявок.";
+          statusEl.style.color = "#22c55e";
+          return;
+        }
+
+        statusEl.textContent = "";
+        drivers.forEach(d => {
+          const item = document.createElement("li");
+          item.className = "admin-list__item";
+          item.dataset.id = d.driver_id;
+          item.innerHTML = `
+            <div class="admin-list__name">
+              ${d.last_name} ${d.first_name} ${d.middle_name || ""}
+            </div>
+            <div class="admin-list__sub">
+              ${d.car_make} ${d.car_model} • ${d.car_plate_number}
+            </div>
+          `;
+          item.addEventListener("click", () => openDriver(d.driver_id));
+          listEl.appendChild(item);
+        });
+
+      } catch (err) {
+        console.error(err);
+        statusEl.textContent = "Ошибка сети при загрузке заявок";
+        statusEl.style.color = "#ef4444";
+      }
+    }
+
+    async function openDriver(id) {
+      currentDriverId = id;
+      // подсветка выбранного
+      [...listEl.children].forEach(li => {
+        li.classList.toggle("admin-list__item--active", li.dataset.id == id);
+      });
+
+      detailEl.innerHTML = "Загружаем данные...";
+
+      try {
+        const res = await fetch(`/api/admin/drivers/${id}`);
+        const d = await res.json();
+
+        if (!res.ok) {
+          detailEl.innerHTML = `<p class="login-info" style="color:#ef4444;">${d.error || "Ошибка загрузки данных"}</p>`;
+          return;
+        }
+
+        detailEl.innerHTML = `
+          <div class="admin-card">
+            <div class="admin-card__header">
+              <strong>${d.last_name} ${d.first_name} ${d.middle_name || ""}</strong>
+            </div>
+            <div class="admin-card__row"><span>Email:</span><span>${d.email}</span></div>
+            <div class="admin-card__row"><span>Телефон:</span><span>${d.phone}</span></div>
+            <div class="admin-card__row"><span>Автомобиль:</span><span>${d.car_make} ${d.car_model}, ${d.car_color}</span></div>
+            <div class="admin-card__row"><span>Гос. номер:</span><span>${d.car_plate_number}</span></div>
+            <div class="admin-card__row"><span>Вод. удостоверение:</span><span>${d.driver_license_num}</span></div>
+            <div class="admin-card__row"><span>Права действительны до:</span><span>${d.license_expires_at}</span></div>
+            <div class="admin-card__row"><span>Стаж (лет):</span><span>${d.experience_years}</span></div>
+            <div class="admin-card__actions">
+              <button class="btn btn--driver" id="approveBtn">Одобрить</button>
+              <button class="btn btn--client" id="rejectBtn" style="margin-left:8px;background:#ef4444;">Отклонить заявку</button>
+            </div>
+          </div>
+        `;
+
+        document.getElementById("approveBtn").addEventListener("click", () => approveDriver(id));
+        document.getElementById("rejectBtn").addEventListener("click", () => rejectDriver(id));
+
+      } catch (err) {
+        console.error(err);
+        detailEl.innerHTML = `<p class="login-info" style="color:#ef4444;">Ошибка сети при загрузке данных</p>`;
+      }
+    }
+
+    async function approveDriver(id) {
+      if (!confirm("Одобрить этого водителя?")) return;
+
+      try {
+        const res = await fetch(`/api/admin/drivers/${id}/approve`, { method: "POST" });
+        const json = await res.json();
+        if (!res.ok) {
+          alert(json.error || "Ошибка при одобрении");
+          return;
+        }
+        alert("Водитель одобрен");
+        loadDrivers();
+      } catch (err) {
+        alert("Ошибка сети при одобрении");
+      }
+    }
+
+    async function rejectDriver(id) {
+      if (!confirm("Отклонить эту заявку?")) return;
+
+      try {
+        const res = await fetch(`/api/admin/drivers/${id}/reject`, { method: "POST" });
+        const json = await res.json();
+        if (!res.ok) {
+          alert(json.error || "Ошибка при отклонении");
+          return;
+        }
+        alert("Заявка отклонена");
+        loadDrivers();
+      } catch (err) {
+        alert("Ошибка сети при отклонении");
+      }
+    }
+
+    loadDrivers();
+</script>
+
+<style>
+    .admin-layout {
+      display: flex;
+      gap: 24px;
+      max-width: 1100px;
+      width: 100%;
+    }
+    .admin-sidebar {
+      flex: 1;
+      background: #020617;
+      border-radius: 24px;
+      padding: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    }
+    .admin-detail {
+      flex: 2;
+      background: #020617;
+      border-radius: 24px;
+      padding: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    }
+    .admin-detail__title {
+      font-size: 20px;
+      margin-bottom: 12px;
+    }
+    .admin-list {
+      list-style: none;
+      padding: 0;
+      margin: 12px 0 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .admin-list__item {
+      padding: 10px 12px;
+      border-radius: 12px;
+      cursor: pointer;
+      background: #0f172a;
+      transition: background 0.15s, transform 0.1s;
+    }
+    .admin-list__item:hover {
+      background: #1e293b;
+      transform: translateY(-1px);
+    }
+    .admin-list__item--active {
+      background: #1d4ed8;
+    }
+    .admin-list__name {
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .admin-list__sub {
+      font-size: 12px;
+      color: #9ca3af;
+    }
+    .admin-card {
+      background: #0f172a;
+      border-radius: 16px;
+      padding: 16px 18px;
+    }
+    .admin-card__header {
+      font-size: 18px;
+      margin-bottom: 12px;
+    }
+    .admin-card__row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 4px;
+      font-size: 14px;
+    }
+    .admin-card__row span:first-child {
+      color: #9ca3af;
+      min-width: 190px;
+    }
+    .admin-card__actions {
+      margin-top: 14px;
+      display: flex;
+      justify-content: flex-end;
+    }
+</style>
+</body>
+</html>

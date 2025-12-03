@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <title>Регистрация клиента — FlyTaxi</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link rel="stylesheet" href="/assets/css/fonts.css">
+    <link rel="stylesheet" href="/assets/css/main.css">
+</head>
+<body class="page page--centered">
+
+<div class="login-box">
+    <h1 class="login-title">Регистрация</h1>
+
+    <form id="registerForm" class="login-form">
+        <input class="input" type="text" name="first_name" placeholder="Имя" required>
+        <input class="input" type="text" name="last_name" placeholder="Фамилия" required>
+        <input class="input" type="text" name="middle_name" placeholder="Отчество">
+        <input class="input" type="email" name="email" placeholder="Email" required>
+        <input class="input" type="tel" name="phone" placeholder="Телефон" required>
+        <input class="input" type="password" name="password" placeholder="Пароль" required>
+        <button class="btn btn--client" type="submit">Зарегистрироваться</button>
+    </form>
+
+    <p class="login-info" id="registerMessage"></p>
+
+    <div class="login-links">
+        <a class="login-back" href="login.html">Уже есть аккаунт? Войти</a>
+        <a class="login-back" href="/index.html">← Назад на главную</a>
+    </div>
+</div>
+
+<script>
+    const form = document.getElementById("registerForm");
+    const message = document.getElementById("registerMessage");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const data = {
+        first_name: form.first_name.value,
+        last_name: form.last_name.value,
+        middle_name: form.middle_name.value,
+        email: form.email.value,
+        phone: form.phone.value,
+        password: form.password.value,
+      };
+
+      message.textContent = "Отправка...";
+      message.style.color = "#e5e7eb";
+
+      try {
+        const res = await fetch("/api/auth/client/register", {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify(data)
+        });
+
+        const json = await res.json();
+
+        if (!res.ok) {
+          message.textContent = json.error || "Ошибка регистрации";
+          message.style.color = "#ef4444";
+          return;
+        }
+
+        message.textContent = "Регистрация успешна! Теперь вы можете войти.";
+        message.style.color = "#22c55e";
+
+        // Например, сразу отправить на логин:
+        // window.location.href = "login.html";
+
+      } catch (err) {
+        message.textContent = "Ошибка сети";
+        message.style.color = "#ef4444";
+      }
+    });
+</script>
+
+</body>
+</html>

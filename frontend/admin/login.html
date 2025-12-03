@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <title>Вход администратора — FlyTaxi</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="/assets/css/fonts.css">
+    <link rel="stylesheet" href="/assets/css/main.css">
+</head>
+<body class="page page--centered">
+<div class="login-box">
+    <h1 class="login-title">Вход администратора</h1>
+    <p class="login-subtitle">Данные для входа выдаются отдельно.</p>
+
+    <form id="adminLoginForm" class="login-form">
+        <div class="input-group">
+            <input
+                    type="text"
+                    name="login"
+                    class="input"
+                    placeholder="Логин"
+                    required
+            />
+        </div>
+
+        <div class="input-group">
+            <input
+                    type="password"
+                    name="password"
+                    class="input"
+                    placeholder="Пароль"
+                    required
+            />
+        </div>
+
+        <button type="submit" class="btn btn--admin" style="width:100%;">
+            Войти 👑
+        </button>
+
+        <div id="adminLoginMessage" class="login-info"></div>
+    </form>
+
+    <div class="login-links">
+        <a class="login-back" href="/">← На главную</a>
+    </div>
+</div>
+
+<script>
+    const form = document.getElementById("adminLoginForm");
+    const message = document.getElementById("adminLoginMessage");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const login = form.login.value.trim();
+      const password = form.password.value;
+
+      message.textContent = "Проверяем данные...";
+      message.style.color = "#e5e7eb";
+
+      try {
+        const res = await fetch("/api/admin/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ login, password })
+        });
+
+        const json = await res.json().catch(() => ({}));
+
+        if (!res.ok) {
+          message.textContent = json.error || "Ошибка авторизации";
+          message.style.color = "#ef4444";
+          return;
+        }
+
+        message.textContent = "Успешный вход, перенаправляем...";
+        message.style.color = "#22c55e";
+
+        // пока без настоящих токенов — просто переходим в админку
+        setTimeout(() => {
+          window.location.href = "/admin/";
+        }, 800);
+      } catch (err) {
+        console.error(err);
+        message.textContent = "Ошибка сети при входе";
+        message.style.color = "#ef4444";
+      }
+    });
+</script>
+</body>
+</html>

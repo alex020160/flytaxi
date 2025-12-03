@@ -1,0 +1,9 @@
+:root {
+  --font-base: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+               sans-serif;
+}
+
+/* Применим базовый шрифт ко всему документу */
+body {
+  font-family: var(--font-base);
+}

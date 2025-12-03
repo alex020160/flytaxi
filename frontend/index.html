@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <title>FlyTaxi – вход</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- ВАЖНО: абсолютные пути -->
+    <link rel="stylesheet" href="/assets/css/fonts.css">
+    <link rel="stylesheet" href="/assets/css/main.css">
+</head>
+<body class="page page--centered">
+<div class="entry">
+    <h1 class="entry__title">FlyTaxi</h1>
+    <p class="entry__subtitle">Кто вы?</p>
+
+    <div class="entry__buttons">
+        <!-- Клиент -->
+        <button class="btn btn--client" id="btnClient">
+            <span class="btn__emoji">😊</span>
+            <span class="btn__label">Я клиент</span>
+        </button>
+
+        <!-- Водитель -->
+        <button class="btn btn--driver" id="btnDriver">
+            <span class="btn__emoji">🚕</span>
+            <span class="btn__label">Я водитель</span>
+        </button>
+    </div>
+
+    <div class="admin-button-wrapper">
+        <button class="btn btn--admin" onclick="location.href='/admin/login.html'">
+            👑 Администратор
+        </button>
+    </div>
+</div>
+
+<script>
+    document.getElementById("btnClient").addEventListener("click", function () {
+      window.location.href = "/client/login.html";   // ведущий слэш!
+    });
+
+    document.getElementById("btnDriver").addEventListener("click", function () {
+      window.location.href = "/driver/login.html";
+    });
+</script>
+</body>
+</html>

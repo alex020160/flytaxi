@@ -1,0 +1,201 @@
+/* Базовая разметка страницы */
+
+* {
+  box-sizing: border-box;
+}
+
+body.page {
+  margin: 0;
+  background: #0f172a;
+  color: #e5e7eb;
+}
+
+/* Центрирование по вертикали/горизонтали */
+
+.page--centered {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Блок входа */
+
+.entry {
+  max-width: 480px;
+  width: 100%;
+  padding: 24px;
+  text-align: center;
+}
+
+.entry__title {
+  margin: 0 0 8px;
+  font-size: 28px;
+}
+
+.entry__subtitle {
+  margin: 0 0 32px;
+  color: #9ca3af;
+  font-size: 14px;
+}
+
+/* Кнопки выбора роли */
+
+.entry__buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  justify-content: center;
+  align-items: center; /* центр по горизонтали */
+}
+
+.admin-button-wrapper {
+  margin-top: 24px;
+  display: flex;
+  justify-content: center;
+}
+
+/* стиль самой кнопки админа */
+.btn.btn--admin {
+  min-width: 260px;
+  background: #334155;           /* более нейтральный цвет */
+  box-shadow: 0 0 40px rgba(148, 163, 184, 0.4);
+}
+
+.btn.btn--admin:hover {
+  background: #1f2933;
+  transform: translateY(-1px);
+}
+
+
+
+.btn {
+  border: none;
+  border-radius: 999px;
+  padding: 14px 20px;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  transition:
+    transform 0.1s ease,
+    box-shadow 0.1s ease,
+    background 0.2s ease;
+}
+
+.btn__emoji {
+  font-size: 26px;
+}
+
+.btn__label {
+  white-space: nowrap;
+}
+
+/* Клиент */
+
+.btn--client {
+  background: #1d4ed8;
+  color: #ffffff;
+  box-shadow: 0 10px 25px rgba(37, 99, 235, 0.4);
+}
+
+.btn--client:hover {
+  background: #2563eb;
+  transform: translateY(-1px);
+  box-shadow: 0 14px 30px rgba(37, 99, 235, 0.5);
+}
+
+/* Водитель */
+
+.btn--driver {
+  background: #059669;
+  color: #ffffff;
+  box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4);
+}
+
+.btn--driver:hover {
+  background: #10b981;
+  transform: translateY(-1px);
+  box-shadow: 0 14px 30px rgba(16, 185, 129, 0.5);
+}
+
+/* Адаптив */
+
+@media (min-width: 640px) {
+  .entry__buttons {
+    flex-direction: row;
+  }
+}
+
+/* Login page */
+
+.login-box {
+  background: #1e293b;
+  padding: 32px;
+  border-radius: 16px;
+  max-width: 440px;
+  width: 100%;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+}
+
+.login-title {
+  margin: 0 0 24px;
+  font-size: 24px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.input {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 2px solid #334155;
+  background: #0f172a;
+  color: #e2e8f0;
+  font-size: 16px;
+  outline: none;
+  transition: border 0.2s ease;
+}
+
+.input:focus {
+  border-color: #2563eb;
+}
+
+.login-info {
+  margin-top: 16px;
+  text-align: center;
+  font-size: 14px;
+  min-height: 20px;
+}
+
+.login-back {
+  display: block;
+  text-align: center;
+  margin-top: 24px;
+  text-decoration: none;
+  font-size: 14px;
+  color: #94a3b8;
+  transition: color 0.2s ease;
+}
+
+.login-back:hover {
+  color: white;
+}
+
+.login-links {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: center;
+}
+

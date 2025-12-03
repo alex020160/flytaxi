@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <title>Регистрация водителя — FlyTaxi</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="/assets/css/fonts.css">
+    <link rel="stylesheet" href="/assets/css/main.css">
+</head>
+<body class="page page--centered">
+<div class="login-box">
+    <h1 class="login-title">Регистрация (водитель)</h1>
+
+    <form id="driverRegisterForm" class="login-form">
+        <!-- ФИО -->
+        <div class="input-group">
+            <input class="input" name="first_name" placeholder="Имя" required />
+        </div>
+        <div class="input-group">
+            <input class="input" name="last_name" placeholder="Фамилия" required />
+        </div>
+        <div class="input-group">
+            <input class="input" name="middle_name" placeholder="Отчество" />
+        </div>
+
+        <!-- Контакты -->
+        <div class="input-group">
+            <input class="input" type="email" name="email" placeholder="Электронная почта" required />
+        </div>
+        <div class="input-group">
+            <input class="input" name="phone" placeholder="Номер телефона" required />
+        </div>
+        <div class="input-group">
+            <input class="input" type="password" name="password" placeholder="Пароль (мин. 6 символов)" required />
+        </div>
+
+        <!-- Машина -->
+        <div class="input-group">
+            <input class="input" name="car_make" placeholder="Марка авто" required />
+        </div>
+        <div class="input-group">
+            <input class="input" name="car_model" placeholder="Модель авто" required />
+        </div>
+        <div class="input-group">
+            <input class="input" name="car_color" placeholder="Цвет авто" required />
+        </div>
+        <div class="input-group">
+            <input class="input" name="car_plate_number" placeholder="Гос. номер" required />
+        </div>
+
+        <!-- Водительское удостоверение -->
+        <div class="input-group">
+            <input class="input" name="driver_license_num" placeholder="Номер водительского удостоверения" required />
+        </div>
+        <div class="input-group">
+            <!-- Браузер показывает DD.MM.YYYY, но value будет YYYY-MM-DD -->
+            <input class="input" type="date" name="license_expires_at" required />
+        </div>
+        <div class="input-group">
+            <input class="input" type="number" name="experience_years" min="0" placeholder="Стаж (лет)" required />
+        </div>
+
+        <button type="submit" class="btn btn--driver" style="width: 100%;">
+            Зарегистрироваться 🚕
+        </button>
+
+        <div id="driverRegisterMessage" class="login-info"></div>
+    </form>
+
+    <div class="login-links">
+        <a class="login-back" href="/driver/login.html">Уже есть аккаунт? Войти</a>
+        <a class="login-back" href="/">← Назад на главную</a>
+    </div>
+</div>
+
+<!-- ВАЖНО: скрипт в самом конце body -->
+<script>
+    console.log("driver register script loaded");
+
+    document.addEventListener("DOMContentLoaded", () => {
+      console.log("DOMContentLoaded fired for driver/register");
+
+      const form = document.getElementById("driverRegisterForm");
+      if (!form) {
+        console.error("driverRegisterForm not found!");
+        return;
+      }
+      const message = document.getElementById("driverRegisterMessage");
+      const submitBtn = form.querySelector("button[type='submit']");
+
+      console.log("driverRegisterForm found, attaching submit handler");
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        console.log("driverRegisterForm submit");
+
+        const data = {
+          first_name: form.first_name.value.trim(),
+          last_name: form.last_name.value.trim(),
+          middle_name: form.middle_name.value.trim(),
+          email: form.email.value.trim(),
+          phone: form.phone.value.trim(),
+          password: form.password.value,
+          car_make: form.car_make.value.trim(),
+          car_model: form.car_model.value.trim(),
+          car_color: form.car_color.value.trim(),
+          car_plate_number: form.car_plate_number.value.trim(),
+          driver_license_num: form.driver_license_num.value.trim(),
+          license_expires_at: form.license_expires_at.value,   // YYYY-MM-DD
+          experience_years: Number(form.experience_years.value),
+        };
+
+        console.log("driver register data:", data);
+
+        submitBtn.disabled = true;
+        message.textContent = "Отправка...";
+        message.style.color = "#e5e7eb";
+
+        try {
+          const res = await fetch("/api/auth/driver/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+          });
+
+          const json = await res.json().catch(() => ({}));
+          console.log("driver/register response:", json);
+
+          if (!res.ok) {
+            message.textContent = json.error || "Ошибка при регистрации водителя";
+            message.style.color = "#ef4444";
+            return;
+          }
+
+          message.textContent =
+            json.message || "Регистрация отправлена! После подтверждения вы сможете войти.";
+          message.style.color = "#22c55e";
+
+          form.reset();
+        } catch (err) {
+          console.error(err);
+          message.textContent = "Ошибка сети при регистрации";
+          message.style.color = "#ef4444";
+        } finally {
+          submitBtn.disabled = false;
+        }
+      });
+    });
+</script>
+</body>
+</html>
