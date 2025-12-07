@@ -23,7 +23,6 @@ services:
     env_file:
       - .env
     environment:
-      # Переопределяем строку подключения, чтобы ходить к СЕРВИСУ db
       DB_URL: postgres://flytaxi:flytaxi@db:5432/flytaxi?sslmode=disable
       HTTP_PORT: "8080"
     networks:
@@ -36,7 +35,7 @@ services:
     depends_on:
       - api
     ports:
-      - "8080:80"      # фронт и API доступны на http://localhost:8080
+      - "8080:80"
     networks:
       - backend
 
