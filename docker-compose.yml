@@ -8,6 +8,8 @@ services:
       POSTGRES_DB: flytaxi
       POSTGRES_USER: flytaxi
       POSTGRES_PASSWORD: flytaxi
+    ports:
+      - "5432:5432"
     volumes:
       - db_data:/var/lib/postgresql/data
     networks:

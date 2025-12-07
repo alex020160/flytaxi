@@ -12,5 +12,11 @@ func NewPool(connStr string) *pgxpool.Pool {
     if err != nil {
         log.Fatalf("failed to connect db: %v", err)
     }
+
+    // ВАЖНО: запуск миграций
+    if err := RunMigrations(pool); err != nil {
+        log.Fatalf("failed to run migrations: %v", err)
+    }
+
     return pool
 }

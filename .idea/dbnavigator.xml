@@ -45,15 +45,16 @@
   </component>
   <component name="DBNavigator.Project.DatabaseConsoleManager">
     <connection id="3ebeac3a-3659-4ec2-92ec-f49edcb13d69">
-      <console name="Connection" type="STANDARD" schema="public" session="Main"><![CDATA[ALTER TABLE public.rides
-ADD COLUMN IF NOT EXISTS tip_amount INTEGER DEFAULT 0;]]></console>
+      <console name="Connection" type="STANDARD" schema="public" session="Main" />
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseEditorStateManager">
     <last-used-providers />
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
-    <open-files />
+    <open-files>
+      <object connection-id="3ebeac3a-3659-4ec2-92ec-f49edcb13d69" object-ref="consoles/Connection" />
+    </open-files>
   </component>
   <component name="DBNavigator.Project.DatabaseSessionManager">
     <connection id="3ebeac3a-3659-4ec2-92ec-f49edcb13d69">
@@ -74,7 +75,6 @@ ADD COLUMN IF NOT EXISTS tip_amount INTEGER DEFAULT 0;]]></console>
     <mapping file-url="file://$PROJECT_DIR$/backend/internal/db/migrations/002_create_drivers.sql" connection-id="3ebeac3a-3659-4ec2-92ec-f49edcb13d69" session-id="MAIN" current-schema="public" />
     <mapping file-url="file://$PROJECT_DIR$/backend/internal/db/migrations/    001_create_users.sql" connection-id="3ebeac3a-3659-4ec2-92ec-f49edcb13d69" session-id="MAIN" current-schema="public" />
     <mapping file-url="file://$PROJECT_DIR$/backend/internal/db/migrations/003_create_password_reset_tokens.sql" connection-id="3ebeac3a-3659-4ec2-92ec-f49edcb13d69" session-id="MAIN" current-schema="public" />
-    <mapping file-url="file://$PROJECT_DIR$/backend/internal/db/migrations/004_add_is_rejected_to_drivers.sql" connection-id="3ebeac3a-3659-4ec2-92ec-f49edcb13d69" session-id="MAIN" current-schema="public" />
   </component>
   <component name="DBNavigator.Project.ObjectQuickFilterManager">
     <last-used-operator value="EQUAL" />
@@ -98,18 +98,18 @@ ADD COLUMN IF NOT EXISTS tip_amount INTEGER DEFAULT 0;]]></console>
           <url-type value="DATABASE" />
           <host value="localhost" />
           <port value="5432" />
-          <database value="taxi" />
+          <database value="flytaxi" />
           <tns-folder value="" />
           <tns-profile value="" />
           <server-type value="" />
           <protocol value="" />
           <url-parameters />
           <type value="USER_PASSWORD" />
-          <user value="postgres" />
+          <user value="flytaxi" />
           <token-type value="" />
           <token-config-file value="" />
           <token-profile value="" />
-          <session-user value="postgres" />
+          <session-user value="flytaxi" />
         </database>
         <properties>
           <auto-commit value="true" />
