@@ -29,8 +29,8 @@ jobs:
       - name: Build & push API image
         uses: docker/build-push-action@v6
         with:
-          context: .
-          file: ./Dockerfile
+          context: ./backend
+          file: ./backend/Dockerfile
           push: true
           tags: |
             ${{ env.IMAGE_API }}:latest
@@ -50,8 +50,10 @@ jobs:
     needs: build-and-push
     runs-on: ubuntu-latest
 
-    # выполняем деплой только на master и только если секрет KUBE_CONFIG задан
-    if: ${{ github.ref == 'refs/heads/master' && secrets.KUBE_CONFIG != '' }}
+    # Сейчас деплой всегда пропускается.
+    # Когда появится реальный кластер, можно заменить условие на:
+    # if: ${{ github.ref == 'refs/heads/master' }}
+    if: ${{ false }}   # деплой временно отключён
 
     steps:
       - name: Checkout
