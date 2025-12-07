@@ -50,8 +50,12 @@ jobs:
     needs: build-and-push
     runs-on: ubuntu-latest
 
-    # ✅ выполняем деплой только если секрет KUBE_CONFIG задан
-    if: github.ref == 'refs/heads/master' && secrets.KUBE_CONFIG != ''
+    # считаем, задан ли секрет с kubeconfig
+    env:
+      HAS_KUBE_CONFIG: ${{ secrets.KUBE_CONFIG != '' }}
+
+    # выполняем деплой только на master и только если секрет есть
+    if: github.ref == 'refs/heads/master' && env.HAS_KUBE_CONFIG == 'true'
 
     steps:
       - name: Checkout
