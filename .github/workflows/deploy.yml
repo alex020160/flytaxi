@@ -29,8 +29,8 @@ jobs:
       - name: Build & push API image
         uses: docker/build-push-action@v6
         with:
-          context: ./backend
-          file: ./backend/Dockerfile
+          context: .
+          file: ./Dockerfile
           push: true
           tags: |
             ${{ env.IMAGE_API }}:latest
@@ -49,7 +49,9 @@ jobs:
   deploy-to-k8s:
     needs: build-and-push
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/master'
+
+    # ✅ выполняем деплой только если секрет KUBE_CONFIG задан
+    if: github.ref == 'refs/heads/master' && secrets.KUBE_CONFIG != ''
 
     steps:
       - name: Checkout
