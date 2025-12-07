@@ -4,79 +4,109 @@
     <meta charset="UTF-8" />
     <title>Вход — FlyTaxi</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-    <!-- ВАЖНО: тоже абсолютные пути -->
-    <link rel="stylesheet" href="/assets/css/fonts.css">
-    <link rel="stylesheet" href="/assets/css/main.css">
+    <link rel="stylesheet" href="/assets/css/fonts.css" />
+    <link rel="stylesheet" href="/assets/css/main.css" />
 </head>
 <body class="page page--centered">
-
 <div class="login-box">
-    <h1 class="login-title">Авторизация</h1>
+    <h1 class="login-title">Вход</h1>
 
-    <form id="loginForm" class="login-form">
-        <input class="input" type="text" name="identifier" placeholder="Телефон или Email" required>
-        <input class="input" type="password" name="password" placeholder="Пароль" required>
-        <button class="btn btn--client" type="submit">Войти</button>
+    <form id="clientLoginForm" class="login-form">
+        <div class="input-group">
+            <input
+                    class="input"
+                    name="identifier"
+                    placeholder="Телефон или Email"
+                    required
+            />
+        </div>
+        <div class="input-group">
+            <input
+                    class="input"
+                    type="password"
+                    name="password"
+                    placeholder="Пароль"
+                    required
+            />
+        </div>
+
+        <button type="submit" class="btn btn--primary" style="width: 100%;">
+            Войти
+        </button>
+
+        <div id="clientLoginMessage" class="login-info"></div>
     </form>
 
-    <p class="login-info" id="loginMessage"></p>
-
     <div class="login-links">
-        <a class="login-back" href="register.html">Нет аккаунта? Зарегистрироваться</a>
-        <a class="login-back" href="forgot-password.html">Забыли пароль?</a>
+        <a class="login-back" href="/client/register.html">Зарегистрироваться</a>
+        <a class="login-back" href="/client/forgot-password.html">Забыли пароль?</a>
         <a class="login-back" href="/">← На главную</a>
     </div>
 </div>
 
 <script>
-    const form = document.getElementById("loginForm");
-    const message = document.getElementById("loginMessage");
+    document.addEventListener("DOMContentLoaded", () => {
+      // если уже залогинен как клиент — сразу на заказ
+      const token = localStorage.getItem("ft_access_token");
+      const user = JSON.parse(localStorage.getItem("ft_user") || "{}");
+      if (token && user.role === "client") {
+        window.location.href = "/client/order.html";
+        return;
+      }
 
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
+      const form = document.getElementById("clientLoginForm");
+      const message = document.getElementById("clientLoginMessage");
 
-      const data = {
-        identifier: form.identifier.value,
-        password: form.password.value,
-      };
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
 
-      message.textContent = "Загрузка...";
-      message.style.color = "#e5e7eb";
+        const identifier = form.identifier.value.trim();
+        const password = form.password.value;
 
-      try {
-        const res = await fetch("/api/auth/login", {
-          method: "POST",
-          headers: {"Content-Type": "application/json"},
-          body: JSON.stringify(data)
-        });
+        message.textContent = "Входим...";
+        message.style.color = "#e5e7eb";
 
-        const json = await res.json();
+        try {
+          const res = await fetch("/api/auth/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ identifier, password }),
+          });
 
-        if (!res.ok) {
-            let msg = json.error;
+          const json = await res.json().catch(() => ({}));
+          console.log("client login response:", json);
 
-            if (msg === "invalid credentials") {
-                msg = "Неверный логин или пароль";
-               }
-
-            message.textContent = msg || "Ошибка авторизации";
+          if (!res.ok) {
+            message.textContent = "Ошибка авторизации";
             message.style.color = "#ef4444";
             return;
+          }
+
+          // сохраняем токен и пользователя
+          localStorage.setItem("ft_access_token", json.access_token);
+          localStorage.setItem("ft_user", JSON.stringify(json.user));
+
+          if (json.user.role !== "client") {
+            message.textContent = "Этот аккаунт не является клиентским";
+            message.style.color = "#ef4444";
+            localStorage.removeItem("ft_access_token");
+            localStorage.removeItem("ft_user");
+            return;
+          }
+
+          message.textContent = "Успешный вход, перенаправляем...";
+          message.style.color = "#22c55e";
+
+          setTimeout(() => {
+            window.location.href = "/client/order.html";
+          }, 600);
+        } catch (err) {
+          console.error(err);
+          message.textContent = "Ошибка сети при входе";
+          message.style.color = "#ef4444";
         }
-
-        message.textContent = "Успешный вход!";
-        message.style.color = "#22c55e";
-
-        // TODO: редирект в личный кабинет
-        // window.location.href = "/client/dashboard.html";
-
-      } catch (err) {
-        message.textContent = "Ошибка сети";
-        message.style.color = "#ef4444";
-      }
+      });
     });
 </script>
-
 </body>
 </html>

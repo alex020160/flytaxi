@@ -2,32 +2,63 @@ version: "3.9"
 
 services:
   db:
-    image: postgres:16
+    image: postgres:16-alpine
+    container_name: flytaxi-db
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: taxi
-    ports:
-      - "5432:5432"
+      POSTGRES_DB: flytaxi
+      POSTGRES_USER: flytaxi
+      POSTGRES_PASSWORD: flytaxi
     volumes:
       - db_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
+    networks:
+      - backend
 
   api:
-    build: ./backend
-    environment:
-      DB_URL: postgres://postgres:postgres@db:5432/taxi?sslmode=disable
-      JWT_SECRET: "supersecret"
-      HTTP_PORT: "8080"
-    ports:
-      - "8080:8080"
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: flytaxi-api
     depends_on:
-      db:
-        condition: service_healthy
+      - db
+    env_file:
+      - .env
+    environment:
+      # Переопределяем строку подключения, чтобы ходить к СЕРВИСУ db
+      DB_URL: postgres://flytaxi:flytaxi@db:5432/flytaxi?sslmode=disable
+      HTTP_PORT: "8080"
+    networks:
+      - backend
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: flytaxi-frontend
+    depends_on:
+      - api
+    ports:
+      - "8080:80"      # фронт и API доступны на http://localhost:8080
+    networks:
+      - backend
+
+  adminer:
+    image: adminer:4
+    container_name: flytaxi-adminer
+    depends_on:
+      - db
+    ports:
+      - "8081:8080"    # http://localhost:8081 - веб-админка БД
+    networks:
+      - backend
+
+  redis:
+    image: redis:7-alpine
+    container_name: flytaxi-redis
+    networks:
+      - backend
 
 volumes:
   db_data:
+
+networks:
+  backend:
+    driver: bridge

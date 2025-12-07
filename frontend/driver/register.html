@@ -7,144 +7,171 @@
     <link rel="stylesheet" href="/assets/css/fonts.css">
     <link rel="stylesheet" href="/assets/css/main.css">
 </head>
-<body class="page page--centered">
+<body class="page driver-register-page">
 <div class="login-box">
-    <h1 class="login-title">Регистрация (водитель)</h1>
+    <h1 class="login-title">Регистрация водителя</h1>
 
     <form id="driverRegisterForm" class="login-form">
-        <!-- ФИО -->
-        <div class="input-group">
-            <input class="input" name="first_name" placeholder="Имя" required />
-        </div>
-        <div class="input-group">
-            <input class="input" name="last_name" placeholder="Фамилия" required />
-        </div>
-        <div class="input-group">
-            <input class="input" name="middle_name" placeholder="Отчество" />
-        </div>
+        <!-- Личные данные -->
+        <input
+                type="text"
+                id="firstName"
+                class="input"
+                placeholder="Имя"
+                autocomplete="given-name"
+                required
+        />
+        <input
+                type="text"
+                id="lastName"
+                class="input"
+                placeholder="Фамилия"
+                autocomplete="family-name"
+                required
+        />
+        <input
+                type="text"
+                id="middleName"
+                class="input"
+                placeholder="Отчество"
+                autocomplete="additional-name"
+        />
 
-        <!-- Контакты -->
-        <div class="input-group">
-            <input class="input" type="email" name="email" placeholder="Электронная почта" required />
-        </div>
-        <div class="input-group">
-            <input class="input" name="phone" placeholder="Номер телефона" required />
-        </div>
-        <div class="input-group">
-            <input class="input" type="password" name="password" placeholder="Пароль (мин. 6 символов)" required />
-        </div>
+        <!-- Контакты и пароль -->
+        <input
+                type="email"
+                id="email"
+                class="input"
+                placeholder="Электронная почта"
+                autocomplete="email"
+                required
+        />
+        <input
+                type="tel"
+                id="phone"
+                class="input"
+                placeholder="Номер телефона"
+                autocomplete="tel"
+                required
+        />
+        <input
+                type="password"
+                id="password"
+                class="input"
+                placeholder="Пароль (мин. 6 символов)"
+                required
+        />
 
-        <!-- Машина -->
-        <div class="input-group">
-            <input class="input" name="car_make" placeholder="Марка авто" required />
-        </div>
-        <div class="input-group">
-            <input class="input" name="car_model" placeholder="Модель авто" required />
-        </div>
-        <div class="input-group">
-            <input class="input" name="car_color" placeholder="Цвет авто" required />
-        </div>
-        <div class="input-group">
-            <input class="input" name="car_plate_number" placeholder="Гос. номер" required />
-        </div>
+        <!-- Данные автомобиля -->
+        <input
+                type="text"
+                id="carMake"
+                class="input"
+                placeholder="Марка авто"
+                required
+        />
+        <input
+                type="text"
+                id="carModel"
+                class="input"
+                placeholder="Модель авто"
+                required
+        />
+        <input
+                type="text"
+                id="carColor"
+                class="input"
+                placeholder="Цвет авто"
+                required
+        />
+        <input
+                type="text"
+                id="carPlate"
+                class="input"
+                placeholder="Гос. номер"
+                required
+        />
+        <input
+                type="text"
+                id="driverLicense"
+                class="input"
+                placeholder="Номер водительского удостоверения"
+                required
+        />
+        <input
+                type="date"
+                id="licenseExpires"
+                class="input"
+                placeholder="ДД.ММ.ГГГГ"
+                required
+        />
+        <input
+                type="number"
+                id="experienceYears"
+                class="input"
+                placeholder="Стаж (лет)"
+                min="0"
+                required
+        />
 
-        <!-- Водительское удостоверение -->
-        <div class="input-group">
-            <input class="input" name="driver_license_num" placeholder="Номер водительского удостоверения" required />
-        </div>
-        <div class="input-group">
-            <!-- Браузер показывает DD.MM.YYYY, но value будет YYYY-MM-DD -->
-            <input class="input" type="date" name="license_expires_at" required />
-        </div>
-        <div class="input-group">
-            <input class="input" type="number" name="experience_years" min="0" placeholder="Стаж (лет)" required />
-        </div>
-
-        <button type="submit" class="btn btn--driver" style="width: 100%;">
-            Зарегистрироваться 🚕
-        </button>
-
-        <div id="driverRegisterMessage" class="login-info"></div>
+        <button type="submit" class="btn btn--driver">Зарегистрироваться</button>
     </form>
 
-    <div class="login-links">
-        <a class="login-back" href="/driver/login.html">Уже есть аккаунт? Войти</a>
-        <a class="login-back" href="/">← Назад на главную</a>
-    </div>
+    <div id="driverRegisterInfo" class="login-info"></div>
+
+    <a href="/driver/login.html" class="login-back">← Уже зарегистрирован</a>
 </div>
 
-<!-- ВАЖНО: скрипт в самом конце body -->
 <script>
-    console.log("driver register script loaded");
-
     document.addEventListener("DOMContentLoaded", () => {
-      console.log("DOMContentLoaded fired for driver/register");
+        const form   = document.getElementById("driverRegisterForm");
+        const infoEl = document.getElementById("driverRegisterInfo");
 
-      const form = document.getElementById("driverRegisterForm");
-      if (!form) {
-        console.error("driverRegisterForm not found!");
-        return;
-      }
-      const message = document.getElementById("driverRegisterMessage");
-      const submitBtn = form.querySelector("button[type='submit']");
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            infoEl.style.color = "#e5e7eb";
+            infoEl.textContent = "Отправляем данные...";
 
-      console.log("driverRegisterForm found, attaching submit handler");
+            const payload = {
+                first_name:        document.getElementById("firstName").value.trim(),
+                last_name:         document.getElementById("lastName").value.trim(),
+                middle_name:       document.getElementById("middleName").value.trim(),
+                email:             document.getElementById("email").value.trim(),
+                phone:             document.getElementById("phone").value.trim(),
+                password:          document.getElementById("password").value,
+                car_make:          document.getElementById("carMake").value.trim(),
+                car_model:         document.getElementById("carModel").value.trim(),
+                car_color:         document.getElementById("carColor").value.trim(),
+                car_plate_number:  document.getElementById("carPlate").value.trim(),
+                driver_license_num:document.getElementById("driverLicense").value.trim(),
+                license_expires_at:document.getElementById("licenseExpires").value,
+                experience_years:  Number(document.getElementById("experienceYears").value || 0),
+            };
 
-      form.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        console.log("driverRegisterForm submit");
+            try {
+                const res = await fetch("/api/auth/driver/register", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload),
+                });
 
-        const data = {
-          first_name: form.first_name.value.trim(),
-          last_name: form.last_name.value.trim(),
-          middle_name: form.middle_name.value.trim(),
-          email: form.email.value.trim(),
-          phone: form.phone.value.trim(),
-          password: form.password.value,
-          car_make: form.car_make.value.trim(),
-          car_model: form.car_model.value.trim(),
-          car_color: form.car_color.value.trim(),
-          car_plate_number: form.car_plate_number.value.trim(),
-          driver_license_num: form.driver_license_num.value.trim(),
-          license_expires_at: form.license_expires_at.value,   // YYYY-MM-DD
-          experience_years: Number(form.experience_years.value),
-        };
+                const json = await res.json().catch(() => ({}));
 
-        console.log("driver register data:", data);
+                if (!res.ok) {
+                    infoEl.style.color = "#f87171";
+                    infoEl.textContent = json.error || "Не удалось зарегистрировать водителя";
+                    return;
+                }
 
-        submitBtn.disabled = true;
-        message.textContent = "Отправка...";
-        message.style.color = "#e5e7eb";
-
-        try {
-          const res = await fetch("/api/auth/driver/register", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data),
-          });
-
-          const json = await res.json().catch(() => ({}));
-          console.log("driver/register response:", json);
-
-          if (!res.ok) {
-            message.textContent = json.error || "Ошибка при регистрации водителя";
-            message.style.color = "#ef4444";
-            return;
-          }
-
-          message.textContent =
-            json.message || "Регистрация отправлена! После подтверждения вы сможете войти.";
-          message.style.color = "#22c55e";
-
-          form.reset();
-        } catch (err) {
-          console.error(err);
-          message.textContent = "Ошибка сети при регистрации";
-          message.style.color = "#ef4444";
-        } finally {
-          submitBtn.disabled = false;
-        }
-      });
+                infoEl.style.color = "#22c55e";
+                infoEl.textContent = json.message || "Регистрация отправлена! После подтверждения вы сможете войти.";
+                form.reset();
+            } catch (err) {
+                console.error(err);
+                infoEl.style.color = "#f87171";
+                infoEl.textContent = "Ошибка сети, попробуйте ещё раз";
+            }
+        });
     });
 </script>
 </body>

@@ -13,6 +13,7 @@ func NewRouter(db *pgxpool.Pool, jwtMgr *auth.JWTManager) *gin.Engine {
     r := gin.Default()
 
     authHandler := auth.NewHandler(db, jwtMgr)
+    r.Use(authHandler.AuthMiddleware())
 
     api := r.Group("/api")
     {
@@ -36,6 +37,31 @@ func NewRouter(db *pgxpool.Pool, jwtMgr *auth.JWTManager) *gin.Engine {
             adminGroup.GET("/drivers/:id",      authHandler.GetDriverApplication)
             adminGroup.POST("/drivers/:id/approve", authHandler.ApproveDriver)
             adminGroup.POST("/drivers/:id/reject",  authHandler.RejectDriver)
+        }
+
+        ridesGroup := api.Group("/rides")
+        {
+             ridesGroup.POST("/create", authHandler.CreateRide)
+             ridesGroup.GET("/active", authHandler.GetClientActiveRide)     // клиент
+             ridesGroup.POST("/:id/cancel", authHandler.CancelRide)         // клиент
+             ridesGroup.POST("/:id/rate",   authHandler.RateRide)           // клиент
+        }
+
+        driverAPI := api.Group("/driver")
+        {
+             driverAPI.GET("/orders", authHandler.ListAvailableOrders)
+             driverAPI.POST("/orders/:id/accept", authHandler.AcceptOrder)
+             driverAPI.POST("/orders/:id/reject", authHandler.RejectOrder)
+             driverAPI.POST("/orders/:id/start",  authHandler.StartRide)
+             driverAPI.POST("/orders/:id/finish", authHandler.FinishRide)
+             driverAPI.POST("/orders/:id/close",  authHandler.CloseRideForDriver)
+             driverAPI.GET("/me", authHandler.DriverProfile)
+        }
+
+        clientAPI := api.Group("/client")
+        {
+            clientAPI.GET("/me", authHandler.ClientProfile)
+            clientAPI.GET("/rides", authHandler.ClientRides)
         }
     }
 

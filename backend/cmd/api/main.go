@@ -2,7 +2,6 @@ package main
 
 import (
     "log"
-    "time"
     "github.com/joho/godotenv"
     "taxi-project/internal/auth"
     "taxi-project/internal/config"
@@ -20,7 +19,7 @@ func main() {
     pool := db.NewPool(cfg.DBURL)
     defer pool.Close()
 
-    jwtMgr := auth.NewJWTManager(cfg.JWTSecret, 24*time.Hour)
+    jwtMgr := auth.NewJWTManager(cfg.JWTSecret)
 
     r := httpServer.NewRouter(pool, jwtMgr)
 

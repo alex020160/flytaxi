@@ -35,130 +35,180 @@
     let currentDriverId = null;
 
     async function loadDrivers() {
-      statusEl.textContent = "Загружаем заявки...";
-      statusEl.style.color = "#e5e7eb";
-      listEl.innerHTML = "";
-      detailEl.innerHTML = `<p class="login-info">Выберите заявку слева, чтобы увидеть подробности.</p>`;
+        statusEl.textContent = "Загружаем заявки...";
+        statusEl.style.color = "#e5e7eb";
+        listEl.innerHTML = "";
+        detailEl.innerHTML = `<p class="login-info">Выберите заявку слева, чтобы увидеть подробности.</p>`;
 
-      try {
-        const res = await fetch("/api/admin/drivers/pending");
-        const json = await res.json();
+        try {
+            const res  = await fetch("/api/admin/drivers/pending");
+            const json = await res.json();
 
-        if (!res.ok) {
-          statusEl.textContent = json.error || "Ошибка загрузки заявок";
-          statusEl.style.color = "#ef4444";
-          return;
+            if (!res.ok) {
+                statusEl.textContent = json.error || "Ошибка загрузки заявок";
+                statusEl.style.color = "#ef4444";
+                return;
+            }
+
+            const drivers = json.drivers || [];
+            if (drivers.length === 0) {
+                statusEl.textContent = "Нет неободобренных заявок.";
+                statusEl.style.color = "#22c55e";
+                return;
+            }
+
+            statusEl.textContent = "";
+            drivers.forEach(d => {
+                const item = document.createElement("li");
+                item.className = "admin-list__item";
+                item.dataset.id = d.driver_id;
+                item.innerHTML = `
+                    <div class="admin-list__name">
+                      ${d.last_name} ${d.first_name} ${d.middle_name || ""}
+                    </div>
+                    <div class="admin-list__sub">
+                      ${d.car_make} ${d.car_model} • ${d.car_plate_number}
+                    </div>
+                `;
+                item.addEventListener("click", () => openDriver(d.driver_id));
+                listEl.appendChild(item);
+            });
+
+        } catch (err) {
+            console.error(err);
+            statusEl.textContent = "Ошибка сети при загрузке заявок";
+            statusEl.style.color = "#ef4444";
         }
-
-        const drivers = json.drivers || [];
-        if (drivers.length === 0) {
-          statusEl.textContent = "Нет неободобренных заявок.";
-          statusEl.style.color = "#22c55e";
-          return;
-        }
-
-        statusEl.textContent = "";
-        drivers.forEach(d => {
-          const item = document.createElement("li");
-          item.className = "admin-list__item";
-          item.dataset.id = d.driver_id;
-          item.innerHTML = `
-            <div class="admin-list__name">
-              ${d.last_name} ${d.first_name} ${d.middle_name || ""}
-            </div>
-            <div class="admin-list__sub">
-              ${d.car_make} ${d.car_model} • ${d.car_plate_number}
-            </div>
-          `;
-          item.addEventListener("click", () => openDriver(d.driver_id));
-          listEl.appendChild(item);
-        });
-
-      } catch (err) {
-        console.error(err);
-        statusEl.textContent = "Ошибка сети при загрузке заявок";
-        statusEl.style.color = "#ef4444";
-      }
     }
 
     async function openDriver(id) {
-      currentDriverId = id;
-      // подсветка выбранного
-      [...listEl.children].forEach(li => {
-        li.classList.toggle("admin-list__item--active", li.dataset.id == id);
-      });
+        currentDriverId = id;
 
-      detailEl.innerHTML = "Загружаем данные...";
+        // подсветка выбранного
+        [...listEl.children].forEach(li => {
+            li.classList.toggle("admin-list__item--active", li.dataset.id == id);
+        });
 
-      try {
-        const res = await fetch(`/api/admin/drivers/${id}`);
-        const d = await res.json();
+        detailEl.innerHTML = "Загружаем данные...";
 
-        if (!res.ok) {
-          detailEl.innerHTML = `<p class="login-info" style="color:#ef4444;">${d.error || "Ошибка загрузки данных"}</p>`;
-          return;
+        try {
+            const res = await fetch(`/api/admin/drivers/${id}`);
+            const d   = await res.json();
+
+            if (!res.ok) {
+                detailEl.innerHTML =
+                    `<p class="login-info" style="color:#ef4444;">${d.error || "Ошибка загрузки данных"}</p>`;
+                return;
+            }
+
+            detailEl.innerHTML = `
+              <div class="admin-card">
+                <div class="admin-card__header">
+                  <strong>${d.last_name} ${d.first_name} ${d.middle_name || ""}</strong>
+                </div>
+                <div class="admin-card__row"><span>Email:</span><span>${d.email}</span></div>
+                <div class="admin-card__row"><span>Телефон:</span><span>${d.phone}</span></div>
+                <div class="admin-card__row"><span>Автомобиль:</span><span>${d.car_make} ${d.car_model}, ${d.car_color}</span></div>
+                <div class="admin-card__row"><span>Гос. номер:</span><span>${d.car_plate_number}</span></div>
+                <div class="admin-card__row"><span>Вод. удостоверение:</span><span>${d.driver_license_num}</span></div>
+                <div class="admin-card__row"><span>Права действительны до:</span><span>${d.license_expires_at}</span></div>
+                <div class="admin-card__row"><span>Стаж (лет):</span><span>${d.experience_years}</span></div>
+
+                <div class="admin-card__row">
+                    <span>Класс автомобиля:</span>
+                    <select id="driverClassSelect"
+                            class="input"
+                            style="flex:1;padding:6px;border-radius:8px;
+                                   background:#0f172a;color:#fff;border:1px solid #1e293b;">
+                        <option value="econom">Эконом</option>
+                        <option value="business">Бизнес</option>
+                        <option value="comfort">Комфорт</option>
+                        <option value="kids">С детьми</option>
+                    </select>
+                </div>
+
+                <div class="admin-card__actions">
+                  <button class="btn btn--driver" id="approveBtn">Одобрить</button>
+                  <button class="btn btn--client" id="rejectBtn" style="margin-left:8px;background:#ef4444;">
+                    Отклонить заявку
+                  </button>
+                </div>
+              </div>
+            `;
+
+            // Если с бэка уже приходит driver_class — проставим его в select
+            const classSelect = document.getElementById("driverClassSelect");
+            if (d.driver_class && ["econom","business","comfort","kids"].includes(d.driver_class)) {
+                classSelect.value = d.driver_class;
+            }
+
+            const approveBtn = document.getElementById("approveBtn");
+            const rejectBtn  = document.getElementById("rejectBtn");
+
+            approveBtn.addEventListener("click", () => approveDriver(id));
+            rejectBtn.addEventListener("click", () => rejectDriver(id));
+
+        } catch (err) {
+            console.error(err);
+            detailEl.innerHTML =
+                `<p class="login-info" style="color:#ef4444;">Ошибка сети при загрузке данных</p>`;
         }
-
-        detailEl.innerHTML = `
-          <div class="admin-card">
-            <div class="admin-card__header">
-              <strong>${d.last_name} ${d.first_name} ${d.middle_name || ""}</strong>
-            </div>
-            <div class="admin-card__row"><span>Email:</span><span>${d.email}</span></div>
-            <div class="admin-card__row"><span>Телефон:</span><span>${d.phone}</span></div>
-            <div class="admin-card__row"><span>Автомобиль:</span><span>${d.car_make} ${d.car_model}, ${d.car_color}</span></div>
-            <div class="admin-card__row"><span>Гос. номер:</span><span>${d.car_plate_number}</span></div>
-            <div class="admin-card__row"><span>Вод. удостоверение:</span><span>${d.driver_license_num}</span></div>
-            <div class="admin-card__row"><span>Права действительны до:</span><span>${d.license_expires_at}</span></div>
-            <div class="admin-card__row"><span>Стаж (лет):</span><span>${d.experience_years}</span></div>
-            <div class="admin-card__actions">
-              <button class="btn btn--driver" id="approveBtn">Одобрить</button>
-              <button class="btn btn--client" id="rejectBtn" style="margin-left:8px;background:#ef4444;">Отклонить заявку</button>
-            </div>
-          </div>
-        `;
-
-        document.getElementById("approveBtn").addEventListener("click", () => approveDriver(id));
-        document.getElementById("rejectBtn").addEventListener("click", () => rejectDriver(id));
-
-      } catch (err) {
-        console.error(err);
-        detailEl.innerHTML = `<p class="login-info" style="color:#ef4444;">Ошибка сети при загрузке данных</p>`;
-      }
     }
 
     async function approveDriver(id) {
-      if (!confirm("Одобрить этого водителя?")) return;
+        const cls = document.getElementById("driverClassSelect")?.value;
 
-      try {
-        const res = await fetch(`/api/admin/drivers/${id}/approve`, { method: "POST" });
-        const json = await res.json();
-        if (!res.ok) {
-          alert(json.error || "Ошибка при одобрении");
-          return;
+        if (!cls) {
+            alert("Выберите класс автомобиля");
+            return;
         }
-        alert("Водитель одобрен");
-        loadDrivers();
-      } catch (err) {
-        alert("Ошибка сети при одобрении");
-      }
+
+        if (!confirm(`Одобрить водителя с классом: ${cls}?`)) return;
+
+        try {
+            const res = await fetch(`/api/admin/drivers/${id}/approve`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ driver_class: cls })
+            });
+
+            const json = await res.json();
+
+            if (!res.ok) {
+                alert(json.error || "Ошибка при одобрении");
+                return;
+            }
+
+            alert(json.message || "Водитель одобрен");
+            loadDrivers();
+
+        } catch (err) {
+            console.error(err);
+            alert("Ошибка сети при одобрении");
+        }
     }
 
     async function rejectDriver(id) {
-      if (!confirm("Отклонить эту заявку?")) return;
+        if (!confirm("Отклонить эту заявку?")) return;
 
-      try {
-        const res = await fetch(`/api/admin/drivers/${id}/reject`, { method: "POST" });
-        const json = await res.json();
-        if (!res.ok) {
-          alert(json.error || "Ошибка при отклонении");
-          return;
+        try {
+            const res  = await fetch(`/api/admin/drivers/${id}/reject`, { method: "POST" });
+            const json = await res.json();
+
+            if (!res.ok) {
+                alert(json.error || "Ошибка при отклонении");
+                return;
+            }
+
+            alert(json.message || "Заявка отклонена");
+            loadDrivers();
+
+        } catch (err) {
+            console.error(err);
+            alert("Ошибка сети при отклонении");
         }
-        alert("Заявка отклонена");
-        loadDrivers();
-      } catch (err) {
-        alert("Ошибка сети при отклонении");
-      }
     }
 
     loadDrivers();

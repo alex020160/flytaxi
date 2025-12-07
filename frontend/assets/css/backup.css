@@ -1,0 +1,1469 @@
+/* Базовая разметка страницы */
+
+* {
+  box-sizing: border-box;
+}
+
+body.page {
+  margin: 0;
+  background: #0f172a;
+  color: #e5e7eb;
+}
+
+/* Центрирование по вертикали/горизонтали */
+
+.page--centered {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Блок входа */
+
+.entry {
+  max-width: 480px;
+  width: 100%;
+  padding: 24px;
+  text-align: center;
+}
+
+.entry__title {
+  margin: 0 0 8px;
+  font-size: 28px;
+}
+
+.entry__subtitle {
+  margin: 0 0 32px;
+  color: #9ca3af;
+  font-size: 14px;
+}
+
+/* Кнопки выбора роли */
+
+.entry__buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  justify-content: center;
+  align-items: center; /* центр по горизонтали */
+}
+
+.admin-button-wrapper {
+  margin-top: 24px;
+  display: flex;
+  justify-content: center;
+}
+
+/* стиль самой кнопки админа */
+.btn.btn--admin {
+  min-width: 260px;
+  background: #334155;           /* более нейтральный цвет */
+  box-shadow: 0 0 40px rgba(148, 163, 184, 0.4);
+}
+
+.btn.btn--admin:hover {
+  background: #1f2933;
+  transform: translateY(-1px);
+}
+
+
+
+.btn {
+  border: none;
+  border-radius: 999px;
+  padding: 14px 20px;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  transition:
+    transform 0.1s ease,
+    box-shadow 0.1s ease,
+    background 0.2s ease;
+}
+
+.btn__emoji {
+  font-size: 26px;
+}
+
+.btn__label {
+  white-space: nowrap;
+}
+
+/* Клиент */
+
+.btn--client {
+  background: #1d4ed8;
+  color: #ffffff;
+  box-shadow: 0 10px 25px rgba(37, 99, 235, 0.4);
+}
+
+.btn--client:hover {
+  background: #2563eb;
+  transform: translateY(-1px);
+  box-shadow: 0 14px 30px rgba(37, 99, 235, 0.5);
+}
+
+/* Водитель */
+
+.btn--driver {
+  background: #059669;
+  color: #ffffff;
+  box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4);
+}
+
+.btn--driver:hover {
+  background: #10b981;
+  transform: translateY(-1px);
+  box-shadow: 0 14px 30px rgba(16, 185, 129, 0.5);
+}
+
+/* Адаптив */
+
+@media (min-width: 640px) {
+  .entry__buttons {
+    flex-direction: row;
+  }
+}
+
+/* Login page */
+
+.login-box {
+  background: #1e293b;
+  padding: 32px;
+  border-radius: 16px;
+  max-width: 440px;
+  width: 100%;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+}
+
+.login-title {
+  margin: 0 0 24px;
+  font-size: 24px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.input {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 2px solid #334155;
+  background: #0f172a;
+  color: #e2e8f0;
+  font-size: 16px;
+  outline: none;
+  transition: border 0.2s ease;
+}
+
+.input:focus {
+  border-color: #2563eb;
+}
+
+.login-info {
+  margin-top: 16px;
+  text-align: center;
+  font-size: 14px;
+  min-height: 20px;
+}
+
+.login-back {
+  display: block;
+  text-align: center;
+  margin-top: 24px;
+  text-decoration: none;
+  font-size: 14px;
+  color: #94a3b8;
+  transition: color 0.2s ease;
+}
+
+.login-back:hover {
+  color: white;
+}
+
+.login-links {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: center;
+}
+
+/* ===== Профиль / личный кабинет ===== */
+
+.profile-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    margin-top: 8px;
+}
+
+.profile-card {
+    background: #020617;
+    border-radius: 18px;
+    padding: 14px 16px;
+    border: 1px solid rgba(148, 163, 184, 0.35);
+}
+
+.profile-card--wide {
+    grid-column: 1 / -1;
+}
+
+.profile-card__title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #e5e7eb;
+}
+
+.profile-card__body p {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    margin-bottom: 4px;
+    color: #e5e7eb;
+}
+
+.profile-card__body p span {
+    color: #9ca3af;
+}
+
+/* Список (адреса и т.п.) */
+.profile-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.profile-list li {
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.profile-list__label {
+    font-size: 13px;
+    color: #9ca3af;
+}
+
+.profile-list__value {
+    font-size: 14px;
+    color: #e5e7eb;
+}
+
+/* Статистика карточками */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.stat-card {
+    padding: 8px 10px;
+    border-radius: 14px;
+    background: rgba(15, 23, 42, 0.9);
+    border: 1px solid rgba(148, 163, 184, 0.35);
+}
+
+.stat-card__label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #9ca3af;
+    margin-bottom: 4px;
+}
+
+.stat-card__value {
+    font-size: 16px;
+    font-weight: 600;
+    color: #e5e7eb;
+}
+
+/* История поездок */
+.history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.history-item {
+    padding: 8px 10px;
+    border-radius: 12px;
+    background: rgba(15, 23, 42, 0.95);
+    border: 1px solid rgba(148, 163, 184, 0.35);
+    font-size: 13px;
+}
+
+.history-item__top {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    color: #e5e7eb;
+    margin-bottom: 4px;
+}
+
+.history-item__bottom {
+    display: flex;
+    justify-content: space-between;
+    color: #9ca3af;
+    font-size: 12px;
+}
+
+@media (max-width: 768px) {
+    .profile-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ================== ORDER PAGE (макет FlyTaxi) ================== */
+
+.order-page {
+  margin: 0;
+  min-height: 100vh;
+  background: #0f172a;
+  color: #e5e7eb;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+  /* центрируем весь блок по окну */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+
+/* основной контейнер: слева логотип+настройки, справа адреса */
+
+.order-wrapper {
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 40px 40px;
+  display: grid;
+  grid-template-columns: minmax(260px, 420px) minmax(280px, 1fr);
+  column-gap: 72px;
+  row-gap: 32px;
+}
+
+
+/* левая колонка */
+
+.order-left {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+/* FLYTAXI крупно, но в палитре сервиса */
+
+.order-logo {
+  font-size: 52px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #f9fafb;
+  margin-bottom: 32px;
+}
+
+/* блок с классами авто */
+
+.order-class-block {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.order-class-row {
+  display: flex;
+  gap: 16px;
+}
+
+/* кнопки-классы авто */
+
+.car-chip {
+  min-width: 120px;
+  padding: 10px 18px;
+  border-radius: 999px;
+  border: none;
+  background: #020617;
+  color: #e5e7eb;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.8);
+  transition: background 0.15s ease, box-shadow 0.15s ease, transform 0.12s ease;
+}
+
+.car-chip--active {
+  background: #22c55e;
+  color: #0b1120;
+  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.35),
+              0 14px 24px rgba(34, 197, 94, 0.6);
+}
+
+.car-chip:hover {
+  transform: translateY(-1px);
+}
+
+/* дополнительные опции */
+
+.order-options-block {
+  margin-top: 10px;
+}
+
+.order-options-row {
+  display: flex;
+  gap: 12px;
+}
+
+/* таблетка с чекбоксом внутри */
+
+.option-pill {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 18px;
+  border-radius: 999px;
+  border: 1px solid #e5e7eb;
+  background: transparent;
+  font-size: 13px;
+  color: #e5e7eb;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease,
+              box-shadow 0.15s ease;
+}
+
+.option-pill input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.option-pill input[type="checkbox"]:checked + span {
+  color: #0b1120;
+}
+
+.option-pill input[type="checkbox"]:checked ~ span {
+  /* fallback, если браузер иначе интерпретирует */
+}
+
+.option-pill input[type="checkbox"]:checked ~ span,
+.option-pill input[type="checkbox"]:checked + span {
+  color: #0b1120;
+}
+
+.option-pill input[type="checkbox"]:checked ~ span,
+.option-pill input[type="checkbox"]:checked + span {
+  /* по факту мы красим саму таблетку */
+}
+
+.option-pill input[type="checkbox"]:checked ~ span,
+.option-pill input[type="checkbox"]:checked + span {
+}
+
+.option-pill input[type="checkbox"]:checked ~ span::before {
+  /* оставлено пустым, чтобы не ломать */
+}
+
+.option-pill input[type="checkbox"]:checked ~ span,
+.option-pill input[type="checkbox"]:checked + span {
+}
+
+.option-pill input[type="checkbox"]:checked ~ span,
+.option-pill input[type="checkbox"]:checked + span {
+}
+
+/* цвет таблетки при активном чекбоксе */
+.option-pill input[type="checkbox"]:checked + span,
+.option-pill input[type="checkbox"]:checked ~ span {
+  /* гарантируем подсветку родителя через :has (где доступно) */
+}
+
+.option-pill:has(input[type="checkbox"]:checked) {
+  background: #e5e7eb;
+  color: #0b1120;
+  border-color: #22c55e;
+  box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.4),
+              0 10px 20px rgba(15, 23, 42, 0.9);
+}
+
+/* подпись и поле комментария */
+
+.order-comment-block {
+  margin-top: 26px;
+  width: 100%;
+}
+
+.order-comment-label {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #9ca3af;
+  margin-bottom: 8px;
+}
+
+.order-comment-input {
+  width: 100%;
+  min-height: 120px;
+  border-radius: 8px;
+  border: none;
+  padding: 14px 16px;
+  background: #0b1120;
+  color: #e5e7eb;
+  font-size: 14px;
+  resize: vertical;
+  box-shadow: inset 0 0 0 1px #1f2937;
+}
+
+/* правая колонка */
+
+.order-right {
+  display: flex;
+  flex-direction: column;
+}
+
+/* верхняя полоска: ФИО + ссылки */
+
+.order-right-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+.order-client-name {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.order-right-header__right {
+  display: flex;
+  gap: 24px;
+}
+
+.order-link {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #e5e7eb;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.order-link:hover {
+  text-decoration: underline;
+}
+
+.order-link--button {
+  /* такая же стилизация, что и текстовая ссылка */
+}
+
+/* блок с маршрутами */
+
+.order-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.order-route-group {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.route-field {
+  display: flex;
+  flex-direction: column;
+}
+
+.route-label {
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #9ca3af;
+  margin-bottom: 6px;
+}
+
+.route-input {
+  height: 50px;
+  border-radius: 6px;
+  border: none;
+  padding: 0 16px;
+  background: #0b1120;
+  color: #e5e7eb;
+  font-size: 15px;
+  box-shadow: inset 0 0 0 1px #1f2937;
+}
+
+/* сводка (ETA + цена) над кнопками */
+
+.order-summary {
+  display: flex;
+  gap: 32px;
+  margin-top: 8px;
+}
+
+.order-summary-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.order-summary-label {
+  font-size: 12px;
+  color: #9ca3af;
+  margin-bottom: 4px;
+}
+
+.order-summary-value {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* кнопки заказа */
+
+.order-actions {
+  margin-top: 10px;
+  display: flex;
+  gap: 24px;
+}
+
+.btn-order {
+  min-width: 210px;
+  height: 52px;
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background: #0b1120;
+  color: #e5e7eb;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.12s ease,
+              box-shadow 0.12s ease,
+              background 0.15s ease,
+              color 0.15s ease,
+              border-color 0.15s ease;
+}
+
+/* зелёная — ВЫЗВАТЬ ТАКСИ */
+
+.btn-order--primary {
+  background: #e5fdf1;
+  color: #064e3b;
+  border-color: #22c55e;
+  box-shadow:
+    0 0 0 1px rgba(34, 197, 94, 0.4),
+    0 12px 26px rgba(15, 23, 42, 0.95);
+}
+
+.btn-order--primary:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    0 0 0 2px rgba(34, 197, 94, 0.45),
+    0 16px 30px rgba(15, 23, 42, 0.98);
+}
+
+/* красная — ОТМЕНА */
+
+.btn-order--secondary {
+  background: #fef2f2;
+  color: #7f1d1d;
+  border-color: #f97373;
+  box-shadow:
+    0 0 0 1px rgba(248, 113, 113, 0.4),
+    0 12px 26px rgba(15, 23, 42, 0.95);
+}
+
+.btn-order--secondary:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    0 0 0 2px rgba(248, 113, 113, 0.45),
+    0 16px 30px rgba(15, 23, 42, 0.98);
+}
+
+/* сообщение об ошибке/успехе */
+
+.order-message {
+  margin-top: 16px;
+  font-size: 13px;
+  min-height: 18px;
+}
+
+/* адаптив */
+
+@media (max-width: 960px) {
+  .order-wrapper {
+    grid-template-columns: 1fr;
+  }
+
+  .order-left {
+    order: 2;
+  }
+
+  .order-right {
+    order: 1;
+  }
+}
+
+@media (max-width: 640px) {
+  .order-wrapper {
+    margin: 24px auto;
+    padding: 0 16px 24px;
+  }
+
+  .order-logo {
+    font-size: 40px;
+  }
+
+  .order-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .btn-order {
+    width: 100%;
+  }
+}
+
+/* ================== DRIVER DASHBOARD ================== */
+
+.driver-dashboard-page {
+  margin: 0;
+  min-height: 100vh;
+  background: #0f172a;
+  color: #e5e7eb;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.driver-dashboard {
+  max-width: 1200px;
+  margin: 0 auto;
+  min-height: 100vh;
+  padding: 40px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 64px;
+}
+
+/* вертикальный FLYTAXI слева */
+
+.driver-dashboard__logo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 44px;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #f9fafb;
+}
+
+/* правая часть — панель */
+
+.driver-dashboard__main {
+  width: 640px;
+  background: #020617;
+  border-radius: 24px;
+  padding: 28px 32px 24px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+}
+
+/* верхние ссылки */
+
+.driver-dashboard__header {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.driver-dashboard__nav {
+  display: flex;
+  gap: 32px;
+}
+
+.driver-dashboard__link {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 13px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #e5e7eb;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.driver-dashboard__link:hover {
+  text-decoration: underline;
+}
+
+.driver-dashboard__link--button {
+  /* тот же стиль, но кнопка */
+}
+
+/* синеватая область с заказами */
+
+.driver-dashboard__panel {
+  background: rgba(15, 23, 42, 0.92);
+  border-radius: 18px;
+  padding: 20px 20px 18px;
+  min-height: 260px;
+}
+
+.driver-orders {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* одна карточка заказа */
+
+.driver-order-card {
+  background: #e5eefc;
+  color: #020617;
+  border-radius: 10px;
+  padding: 10px 14px 12px;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.55);
+}
+
+.driver-order-card__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.driver-order-card__title {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #1f2937;
+}
+
+.driver-order-card__top-actions {
+  display: flex;
+  gap: 6px;
+}
+
+/* кнопки + и − */
+
+.driver-order-card__icon-btn {
+  width: 28px;
+  height: 26px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #f9fafb;
+  background: #2563eb;
+  transition: background 0.15s ease, transform 0.12s ease;
+}
+
+.driver-order-card__icon-btn:hover {
+  background: #1d4ed8;
+  transform: translateY(-1px);
+}
+
+.driver-order-card__icon-btn--reject {
+  background: #ef4444;
+}
+
+.driver-order-card__icon-btn--reject:hover {
+  background: #dc2626;
+}
+
+.driver-order-card__body {
+  font-size: 13px;
+}
+
+.driver-order-card__row {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 4px;
+}
+
+.driver-order-card__row .label {
+  font-weight: 500;
+  color: #111827;
+}
+
+.driver-order-card__row .value {
+  color: #1f2937;
+}
+
+.driver-order-card__row--meta {
+  justify-content: space-between;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.driver-order-card__row--tags {
+  display: flex;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+/* комментарий */
+
+.driver-order-card__comment {
+  margin-top: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.driver-order-card__comment .label {
+  font-weight: 500;
+  color: #111827;
+}
+
+/* тег опции (с питомцем / бустер) */
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #1d4ed8;
+  color: #f9fafb;
+  font-size: 11px;
+}
+
+/* сообщение «нет заказов» */
+
+.orders-empty {
+  text-align: center;
+  font-size: 14px;
+  color: #9ca3af;
+}
+
+/* низ панели: подпись + кнопка обновления */
+
+.driver-dashboard__footer {
+  margin-top: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.driver-dashboard__footer-title {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: #e5e7eb;
+}
+
+.driver-dashboard__refresh-btn {
+  padding: 6px 18px;
+  border-radius: 999px;
+  border: 1px solid #e5e7eb;
+  background: transparent;
+  color: #e5e7eb;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.driver-dashboard__refresh-btn:hover {
+  background: #e5e7eb;
+  color: #020617;
+  border-color: #e5e7eb;
+}
+
+/* сообщение об ошибке/успехе */
+
+.driver-dashboard__message {
+  margin-top: 8px;
+  min-height: 18px;
+  font-size: 13px;
+  text-align: center;
+}
+
+/* адаптив */
+
+@media (max-width: 960px) {
+  .driver-dashboard {
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: 32px;
+  }
+
+  .driver-dashboard__logo {
+    flex-direction: row;
+    font-size: 32px;
+    letter-spacing: 0.18em;
+  }
+
+  .driver-dashboard__main {
+    width: 100%;
+    max-width: 640px;
+  }
+}
+
+@media (max-width: 640px) {
+  .driver-dashboard__panel {
+    padding: 16px 14px;
+  }
+
+  .driver-dashboard {
+    padding: 24px 16px;
+  }
+}
+
+/* ===== DRIVER DASHBOARD ===== */
+
+.driver-page {
+    display: flex;
+    background: #0f172a;
+    color: #e5e7eb;
+    min-height: 100vh;
+    font-family: system-ui;
+}
+
+/* ЛЕВАЯ КОЛОНКА */
+
+.driver-sidebar {
+    width: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.driver-logo {
+    font-size: 54px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    line-height: 0.9em;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+/* ПРАВАЯ ОБЛАСТЬ */
+
+.driver-content {
+    flex: 1;
+    padding: 40px 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* ТОП МЕНЮ */
+
+.driver-topbar {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    gap: 40px;
+    font-size: 14px;
+    margin-bottom: 30px;
+}
+
+.driver-link {
+    background: none;
+    border: none;
+    color: #e5e7eb;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.driver-link:hover {
+    text-decoration: underline;
+}
+
+/* КОНТЕЙНЕР ЗАКАЗОВ */
+
+.driver-orders-container {
+    width: 70%;
+    background: #1e293b;
+    padding: 40px;
+    border-radius: 14px;
+    min-height: 420px;
+}
+
+/* СПИСОК */
+
+.driver-empty {
+    font-size: 16px;
+    text-align: center;
+    color: #9ca3af;
+}
+
+.driver-orders-list {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+/* КАРТОЧКА */
+
+.driver-order-card {
+    background: #ffffff;
+    color: #111;
+    border-radius: 12px;
+    padding: 20px 24px;
+    font-size: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.driver-order-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.driver-order-controls {
+    display: flex;
+    gap: 6px;
+}
+
+.toggle-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    border: none;
+    background: #1d4ed8;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.toggle-btn:hover {
+    background: #2563eb;
+}
+
+/* ДЕТАЛИ */
+
+.driver-order-details {
+    margin-top: 12px;
+}
+
+.driver-order-details p {
+    margin: 4px 0;
+}
+
+/* НИЗ СТРАНИЦЫ */
+
+.driver-footer {
+    margin-top: 40px;
+    text-align: center;
+}
+
+.driver-title {
+    font-size: 16px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 12px;
+}
+
+.driver-refresh-btn {
+    padding: 8px 18px;
+    border-radius: 20px;
+    border: none;
+    background: #fff;
+    color: #111;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+}
+
+.driver-refresh-btn:hover {
+    background: #e2e8f0;
+}
+
+.driver-message {
+    margin-top: 10px;
+    font-size: 13px;
+    color: #f87171;
+}
+
+/* ROWS */
+
+.driver-order-row {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+}
+
+.driver-order-field {
+    width: 160px;
+    font-weight: 600;
+    color: #0f172a;
+}
+
+.driver-order-value {
+    flex: 1;
+    color: #1f2937;
+    line-height: 1.4;
+}
+
+/* ACTION BUTTONS */
+
+.driver-order-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.btn-accept, .btn-reject {
+    flex: 1;
+    padding: 10px;
+    font-size: 14px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.btn-accept {
+    background: #22c55e;
+    color: #051b11;
+}
+
+.btn-accept:hover {
+    background: #16a34a;
+}
+
+.btn-reject {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.btn-reject:hover {
+    background: #fecaca;
+}
+
+/* ===== ДАШБОРД ВОДИТЕЛЯ (по макету) ===== */
+
+body.driver-dashboard-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+/* Общий контейнер */
+
+.driver-layout {
+  display: grid;
+  grid-template-columns: 90px minmax(520px, 780px);
+  column-gap: 64px;
+  align-items: flex-start;
+  max-width: 1100px;
+  width: 100%;
+  padding: 40px 0;
+}
+
+/* Вертикальный логотип FLYTAXI слева */
+
+.driver-logo-vertical {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  font-size: 40px;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+/* Правая часть */
+
+.driver-main-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Верхняя навигация */
+
+.driver-top-nav {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  gap: 32px;
+  margin-bottom: 24px;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.driver-nav-link {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #e5e7eb;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.driver-nav-link:hover {
+  text-decoration: underline;
+}
+
+/* Голубой блок с заказами */
+
+.driver-orders-wrapper {
+  width: 100%;
+  min-height: 320px;
+  background: #1e293b;
+  border-radius: 24px;
+  padding: 24px 28px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.55);
+}
+
+.driver-orders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.driver-empty {
+  text-align: center;
+  color: #e5e7eb;
+  opacity: 0.8;
+  padding: 40px 0;
+}
+
+/* Карточка заказа (внутри синей панели) */
+
+.driver-order-card {
+  background: #f9fafb;
+  color: #111827;
+  border-radius: 12px;
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+}
+
+.driver-order-row {
+  display: flex;
+  gap: 8px;
+}
+
+.driver-order-field {
+  width: 140px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.driver-order-value {
+  flex: 1;
+  color: #374151;
+}
+
+/* Кнопки принять / отказать */
+
+.driver-order-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.btn-accept,
+.btn-reject {
+  flex: 1;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: none;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-accept {
+  background: #22c55e;
+  color: #052e16;
+}
+
+.btn-accept:hover {
+  background: #16a34a;
+}
+
+.btn-reject {
+  background: #fee2e2;
+  color: #7f1d1d;
+}
+
+.btn-reject:hover {
+  background: #fecaca;
+}
+
+/* Низ: "Актуальные заказы" и кнопка обновить */
+
+.driver-bottom {
+  margin-top: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.driver-bottom-title {
+  font-size: 14px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.driver-refresh-btn {
+  padding: 6px 20px;
+  border-radius: 999px;
+  border: 1px solid #e5e7eb;
+  background: transparent;
+  color: #e5e7eb;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.driver-refresh-btn:hover {
+  background: #e5e7eb;
+  color: #0f172a;
+}
+
+.driver-message {
+  font-size: 13px;
+  min-height: 18px;
+}
+
+

@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <title>Новый заказ — FlyTaxi</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="/assets/css/fonts.css">
+    <link rel="stylesheet" href="/assets/css/main.css">
+</head>
+<body class="page order-page">
+<div class="order-wrapper">
+    <!-- Левая часть: выбор тарифа и опций -->
+    <section class="order-left">
+        <div class="order-left-header">
+            <div class="order-logo">FlyTaxi</div>
+        </div>
+
+        <div class="order-block">
+            <div class="order-block-title">КЛАСС АВТО</div>
+            <div id="carClassGroup" class="car-class-group">
+                <button type="button" class="car-chip car-chip--active" data-value="econom">
+                    <span class="car-chip__title">Эконом</span>
+                </button>
+                <button type="button" class="car-chip" data-value="comfort">
+                    <span class="car-chip__title">Комфорт</span>
+                </button>
+                <button type="button" class="car-chip" data-value="business">
+                    <span class="car-chip__title">Бизнес</span>
+                </button>
+                <button type="button" class="car-chip" data-value="kids">
+                    <span class="car-chip__title">С детьми</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="order-block">
+            <div class="order-block-title">ДОПОЛНИТЕЛЬНО</div>
+            <div class="order-options">
+                <label class="option-pill">
+                    <input type="checkbox" id="withPet" />
+                    <span>С питомцем</span>
+                </label>
+                <label class="option-pill">
+                    <input type="checkbox" id="withBooster" />
+                    <span>Бустер</span>
+                </label>
+            </div>
+        </div>
+
+        <div class="order-comment-block">
+            <div class="order-comment-label">КОММЕНТАРИЙ ВОДИТЕЛЮ</div>
+            <textarea id="comment" class="order-comment-input"
+                      placeholder="Например: «Подъедьте ко второму подъезду»"></textarea>
+        </div>
+    </section>
+
+    <!-- Правая часть: маршрут, текущая поездка, оценка -->
+    <section class="order-right">
+        <header class="order-right-header">
+            <div class="order-right-header__left">
+                <span id="clientName" class="order-client-name">Клиент</span>
+            </div>
+            <div class="order-right-header__right">
+                <a href="/client/profile.html" class="order-link">ЛИЧНЫЙ КАБИНЕТ</a>
+                <button id="logoutBtn" class="order-link order-link--button">ВЫЙТИ</button>
+            </div>
+        </header>
+
+        <main>
+            <!-- Форма нового заказа -->
+            <form id="orderForm" class="order-form">
+                <div class="order-route-group">
+                    <div class="route-field">
+                        <label for="from" class="route-label">ОТКУДА</label>
+                        <input id="from" name="from" class="route-input" placeholder="Улица, дом" required />
+                    </div>
+                    <div class="route-field">
+                        <label for="to" class="route-label">КУДА</label>
+                        <input id="to" name="to" class="route-input" placeholder="Улица, дом" required />
+                    </div>
+                </div>
+
+                <div class="order-summary">
+                    <div class="order-summary-item">
+                        <div class="order-summary-label">Время в пути</div>
+                        <div class="order-summary-value" id="etaValue">—</div>
+                    </div>
+                    <div class="order-summary-item">
+                        <div class="order-summary-label">Стоимость</div>
+                        <div class="order-summary-value" id="priceValue">—</div>
+                    </div>
+                </div>
+
+                <div class="order-actions">
+                    <button type="submit"
+                            class="btn-order btn-order--primary"
+                            id="orderSubmitBtn">
+                        ВЫЗВАТЬ ТАКСИ
+                    </button>
+                    <button type="button"
+                            class="btn-order btn-order--secondary"
+                            id="orderCancelBtn">
+                        ОТМЕНА
+                    </button>
+                </div>
+
+                <div id="orderMessage" class="order-message"></div>
+            </form>
+
+            <!-- Блок текущей поездки -->
+            <section id="activeRideContainer"
+                     class="profile-card"
+                     style="margin-top:16px; display:none;">
+                <h2 class="profile-card__title">Текущая поездка</h2>
+                <div id="activeRideContent" class="profile-card__body"></div>
+            </section>
+
+            <!-- Блок оценки поездки -->
+            <section id="ratingContainer"
+                     class="profile-card"
+                     style="margin-top:16px; display:none;">
+                <h2 class="profile-card__title">Оцените поездку</h2>
+                <div class="profile-card__body">
+                    <div class="order-rating-controls">
+                        <div style="margin-bottom:8px;">
+                            <label>
+                                Оценка (0–5):
+                                <input id="ratingInput"
+                                       type="number"
+                                       min="0" max="5"
+                                       class="route-input"
+                                       style="max-width:80px;">
+                            </label>
+                        </div>
+                        <div style="margin-bottom:8px;">
+                            <label>
+                                Чаевые, ₽:
+                                <input id="tipInput"
+                                       type="number"
+                                       min="0"
+                                       class="route-input"
+                                       style="max-width:120px;">
+                            </label>
+                        </div>
+                        <textarea id="ratingComment"
+                                  class="order-comment-input"
+                                  placeholder="Комментарий (необязательно)"></textarea>
+                        <button type="button"
+                                id="sendRatingBtn"
+                                class="btn-order btn-order--primary"
+                                style="margin-top:8px;">
+                            ГОТОВО
+                        </button>
+                    </div>
+                    <div id="ratingMessage" class="order-message"></div>
+                </div>
+            </section>
+        </main>
+    </section>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const token = localStorage.getItem("ft_access_token");
+        const user  = JSON.parse(localStorage.getItem("ft_user") || "{}");
+
+        if (!token || user.role !== "client") {
+            window.location.href = "/client/login.html";
+            return;
+        }
+
+        const nameEl = document.getElementById("clientName");
+        if (user.first_name) {
+            nameEl.textContent = user.first_name + (user.last_name ? " " + user.last_name : "");
+        }
+
+        const form        = document.getElementById("orderForm");
+        const message     = document.getElementById("orderMessage");
+        const submitBtn   = document.getElementById("orderSubmitBtn");
+        const cancelBtn   = document.getElementById("orderCancelBtn");
+
+        const carClassGrp = document.getElementById("carClassGroup");
+        const etaValue    = document.getElementById("etaValue");
+        const priceValue  = document.getElementById("priceValue");
+
+        const activeRideContainer = document.getElementById("activeRideContainer");
+        const activeRideContent   = document.getElementById("activeRideContent");
+        const ratingContainer     = document.getElementById("ratingContainer");
+        const ratingMessage       = document.getElementById("ratingMessage");
+        const ratingInput         = document.getElementById("ratingInput");
+        const tipInput            = document.getElementById("tipInput");
+        const ratingComment       = document.getElementById("ratingComment");
+        const sendRatingBtn       = document.getElementById("sendRatingBtn");
+
+        let selectedClass  = "econom";
+        let currentRideId  = null;
+        let rideTimerId    = null;
+        let lastEtaMinutes = null;
+        let lastPrice      = null;
+
+        function formatDurationFromStrings(startStr, endStr) {
+            const start = new Date(startStr);
+            const end   = endStr ? new Date(endStr) : new Date();
+
+            if (isNaN(start.getTime()) || isNaN(end.getTime()) || end <= start) {
+                return "00:00:00";
+            }
+
+            const diffMs   = end.getTime() - start.getTime();
+            const totalSec = Math.floor(diffMs / 1000);
+
+            const h = String(Math.floor(totalSec / 3600)).padStart(2, "0");
+            const m = String(Math.floor((totalSec % 3600) / 60)).padStart(2, "0");
+            const s = String(totalSec % 60).padStart(2, "0");
+
+            return `${h}:${m}:${s}`;
+        }
+
+        // === Переключение класса авто ===
+        carClassGrp.addEventListener("click", (e) => {
+            const btn = e.target.closest(".car-chip");
+            if (!btn) return;
+
+            carClassGrp.querySelectorAll(".car-chip").forEach(ch => ch.classList.remove("car-chip--active"));
+            btn.classList.add("car-chip--active");
+            selectedClass = btn.dataset.value;
+            recalcEstimate();
+        });
+
+        form.from.addEventListener("input", recalcEstimate);
+        form.to.addEventListener("input", recalcEstimate);
+
+        function recalcEstimate() {
+            const from = form.from.value.trim();
+            const to   = form.to.value.trim();
+
+            if (!from || !to) {
+                etaValue.textContent   = "—";
+                priceValue.textContent = "—";
+                lastEtaMinutes = null;
+                lastPrice      = null;
+                return;
+            }
+
+            const minutes = 10 + Math.floor(Math.random() * (600 - 10 + 1)); // 10–600 мин
+
+            if (minutes >= 60) {
+                const h = Math.floor(minutes / 60);
+                const m = minutes % 60;
+                etaValue.textContent = m > 0 ? `${h} ч ${m} мин` : `${h} ч`;
+            } else {
+                etaValue.textContent = `${minutes} мин`;
+            }
+
+            let base;
+            let coef;
+
+            switch (selectedClass) {
+                case "econom":
+                    base = 80;
+                    coef = 2.2;
+                    break;
+                case "kids":
+                    base = 120;
+                    coef = 2.8;
+                    break;
+                case "business":
+                    base = 250;
+                    coef = 4.2;
+                    break;
+                case "comfort":
+                    base = 200;
+                    coef = 3.4;
+                    break;
+                default:
+                    base = 80;
+                    coef = 2.2;
+            }
+
+            let price = Math.round(base + minutes * coef);
+
+            if (price < 100)   price = 100;
+            if (price > 10000) price = 10000;
+
+            lastEtaMinutes = minutes;
+            lastPrice      = price;
+
+            priceValue.textContent = price + " ₽";
+        }
+
+        // === Создание заказа ===
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const payload = {
+                from: form.from.value.trim(),
+                to: form.to.value.trim(),
+                car_class: selectedClass,
+                with_pet: document.getElementById("withPet").checked,
+                with_booster: document.getElementById("withBooster").checked,
+                comment: document.getElementById("comment").value.trim(),
+                eta_minutes: lastEtaMinutes,
+                price: lastPrice,
+            };
+
+            submitBtn.disabled = true;
+            message.textContent = "Поиск свободного автомобиля…";
+            message.style.color = "#e5e7eb";
+
+            try {
+                const res = await fetch("/api/rides/create", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": "Bearer " + token,
+                    },
+                    body: JSON.stringify(payload),
+                });
+
+                const json = await res.json().catch(() => ({}));
+                if (!res.ok) {
+                    message.textContent = json.error || "Не удалось создать заказ";
+                    message.style.color = "#f97373";
+                    return;
+                }
+
+                message.textContent = json.message || "Заказ создан! Ищем ближайшего водителя…";
+                message.style.color = "#4ade80";
+
+                await loadActiveRide();
+            } catch (err) {
+                console.error(err);
+                message.textContent = "Ошибка сети при создании заказа";
+                message.style.color = "#f97373";
+            } finally {
+                submitBtn.disabled = false;
+            }
+        });
+
+        // Сброс формы
+        cancelBtn.addEventListener("click", () => {
+            form.reset();
+            selectedClass = "econom";
+            document.querySelectorAll(".car-chip").forEach(ch => ch.classList.remove("car-chip--active"));
+            document.querySelector(".car-chip[data-value='econom']").classList.add("car-chip--active");
+            etaValue.textContent   = "—";
+            priceValue.textContent = "—";
+            message.textContent    = "";
+        });
+
+        // Таймер в формате HH:MM:SS
+        function startTimerFrom(dateStr, el) {
+            if (rideTimerId) clearInterval(rideTimerId);
+
+            const start = dateStr ? new Date(dateStr) : new Date();
+
+            function tick() {
+                const diffMs = Date.now() - start.getTime();
+                const totalSec = Math.max(0, Math.floor(diffMs / 1000));
+
+                const h = String(Math.floor(totalSec / 3600)).padStart(2, "0");
+                const m = String(Math.floor((totalSec % 3600) / 60)).padStart(2, "0");
+                const s = String(totalSec % 60).padStart(2, "0");
+
+                el.textContent = `${h}:${m}:${s}`;
+            }
+
+            tick();
+            rideTimerId = setInterval(tick, 1000);
+        }
+
+        // Загрузка текущей поездки
+        async function loadActiveRide() {
+            if (rideTimerId) {
+                clearInterval(rideTimerId);
+                rideTimerId = null;
+            }
+
+            activeRideContainer.style.display = "none";
+            ratingContainer.style.display     = "none";
+            ratingMessage.textContent         = "";
+
+            try {
+                const res  = await fetch("/api/rides/active", {
+                    headers: { "Authorization": "Bearer " + token }
+                });
+                const json = await res.json().catch(() => ({}));
+
+                if (!res.ok) return;
+
+                const ride = json.ride;
+                if (!ride) return;
+
+                currentRideId = ride.id;
+                activeRideContainer.style.display = "block";
+
+                if (ride.status === "new" || ride.status === "assigned") {
+                    const etaText =
+                        ride.eta_minutes ? `${ride.eta_minutes} мин` : "ожидаем расчёт времени";
+
+                    activeRideContent.innerHTML = `
+                        <p><strong>Откуда:</strong> ${ride.from}</p>
+                        <p><strong>Куда:</strong> ${ride.to}</p>
+                        <p><strong>Статус:</strong> ${
+                            ride.status === "new"
+                                ? "Заказ создан. Ищем водителя…"
+                                : "Водитель подъезжает к вам"
+                        }</p>
+                        <p><strong>Примерное время прибытия:</strong> ${etaText}</p>
+                        <p><strong>Стоимость:</strong> ${(ride.price || "—") + " ₽"}</p>
+                        <button type="button"
+                                id="cancelActiveBtn"
+                                class="btn-order btn-order--secondary"
+                                style="margin-top:8px;">
+                            Отменить заказ
+                        </button>
+                    `;
+
+                    const cancelActiveBtn = document.getElementById("cancelActiveBtn");
+                    cancelActiveBtn.addEventListener("click", async () => {
+                        if (!currentRideId) return;
+                        if (!confirm("Отменить текущий заказ?")) return;
+
+                        try {
+                            const res = await fetch(`/api/rides/${currentRideId}/cancel`, {
+                                method: "POST",
+                                headers: { "Authorization": "Bearer " + token }
+                            });
+                            const j = await res.json().catch(() => ({}));
+                            if (!res.ok) {
+                                alert(j.error || "Не удалось отменить заказ");
+                                return;
+                            }
+                            alert(j.message || "Заказ отменён");
+                            await loadActiveRide();
+                        } catch (err) {
+                            console.error(err);
+                            alert("Ошибка сети при отмене заказа");
+                        }
+                    });
+                } else if (ride.status === "in_progress") {
+                    activeRideContent.innerHTML = `
+                        <p><strong>Откуда:</strong> ${ride.from}</p>
+                        <p><strong>Куда:</strong> ${ride.to}</p>
+                        <p><strong>Статус:</strong> Поездка началась</p>
+                        <p>
+                            <strong>Время поездки:</strong>
+                            <span id="rideTimer">00:00:00</span>
+                        </p>
+                        <p><strong>Стоимость:</strong> ${(ride.price || "—") + " ₽"}</p>
+                    `;
+
+                    const timerEl = document.getElementById("rideTimer");
+                    startTimerFrom(ride.started_at, timerEl);
+                } else if (ride.status === "finished") {
+
+                    let durationHtml = "";
+                    if (ride.started_at && ride.finished_at) {
+                        const durationText = formatDurationFromStrings(ride.started_at, ride.finished_at);
+                        durationHtml = `
+                            <p><strong>Время поездки:</strong> ${durationText}</p>
+                        `;
+                    }
+
+                    activeRideContent.innerHTML = `
+                        <p><strong>Откуда:</strong> ${ride.from}</p>
+                        <p><strong>Куда:</strong> ${ride.to}</p>
+                        <p><strong>Статус:</strong> Поездка завершена</p>
+                        ${durationHtml}
+                        <p><strong>Стоимость:</strong> ${(ride.price || "—") + " ₽"}</p>
+                    `;
+
+                    if (ride.rating == null) {
+                        ratingContainer.style.display = "block";
+                    } else {
+                        ratingContainer.style.display = "none";
+                    }
+                }
+            } catch (err) {
+            console.error(err);
+            }
+        }
+
+        // Отправка оценки
+        sendRatingBtn.addEventListener("click", async () => {
+            if (!currentRideId) return;
+
+            const rating = Number(ratingInput.value || 0);
+            const tip    = Number(tipInput.value || 0);
+            const comment = ratingComment.value.trim();
+
+            ratingMessage.textContent = "";
+            ratingMessage.style.color = "#e5e7eb";
+
+            if (rating < 0 || rating > 5) {
+                ratingMessage.textContent = "Оценка должна быть от 0 до 5";
+                ratingMessage.style.color = "#f97373";
+                return;
+            }
+            if (tip < 0) {
+                ratingMessage.textContent = "Чаевые не могут быть отрицательными";
+                ratingMessage.style.color = "#f97373";
+                return;
+            }
+
+            try {
+                const res = await fetch(`/api/rides/${currentRideId}/rate`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": "Bearer " + token,
+                    },
+                    body: JSON.stringify({
+                        rating: rating,
+                        tip_amount: tip,
+                        comment: comment,
+                    }),
+                });
+
+                const json = await res.json().catch(() => ({}));
+                if (!res.ok) {
+                    ratingMessage.textContent = json.error || "Не удалось сохранить оценку";
+                    ratingMessage.style.color = "#f97373";
+                    return;
+                }
+
+                ratingMessage.textContent = json.message || "Спасибо за оценку!";
+                ratingMessage.style.color = "#4ade80";
+
+                setTimeout(() => {
+                    ratingContainer.style.display = "none";
+                    activeRideContainer.style.display = "none";
+                    currentRideId = null;
+                    if (rideTimerId) {
+                        clearInterval(rideTimerId);
+                        rideTimerId = null;
+                    }
+                }, 800);
+            } catch (err) {
+                console.error(err);
+                ratingMessage.textContent = "Ошибка сети при отправке оценки";
+                ratingMessage.style.color = "#f97373";
+            }
+
+        });
+
+        document.getElementById("logoutBtn").addEventListener("click", () => {
+            localStorage.removeItem("ft_access_token");
+            localStorage.removeItem("ft_user");
+            window.location.href = "/";
+        });
+
+        loadActiveRide();
+        setInterval(loadActiveRide, 15000);
+    });
+</script>
+</body>
+</html>

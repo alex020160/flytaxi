@@ -9,6 +9,24 @@
     <value-preview-text-wrapping value="false" />
     <value-preview-pinned value="false" />
   </component>
+  <component name="DBNavigator.Project.DataExportManager">
+    <export-instructions>
+      <create-header value="true" />
+      <friendly-headers value="false" />
+      <quote-values-containing-separator value="true" />
+      <quote-all-values value="false" />
+      <value-separator value="" />
+      <begin-quote value="&quot;" />
+      <end-quote value="&quot;" />
+      <file-name value="" />
+      <file-location value="" />
+      <scope value="GLOBAL" />
+      <destination value="FILE" />
+      <format value="EXCEL" />
+      <charset value="UTF-8" />
+      <charset value="UTF-8" />
+    </export-instructions>
+  </component>
   <component name="DBNavigator.Project.DatabaseAssistantManager">
     <assistants>
       <assistant-state connection-id="virtual-postgres-connection" default-profile-name="" selected-conversation-id="" assistant-type="GENERIC" availability="UNAVAILABLE" acknowledgement="NONE">
@@ -27,25 +45,24 @@
   </component>
   <component name="DBNavigator.Project.DatabaseConsoleManager">
     <connection id="3ebeac3a-3659-4ec2-92ec-f49edcb13d69">
-      <console name="Connection" type="STANDARD" schema="public" session="Main"><![CDATA[SELECT column_name, data_type
-FROM information_schema.columns
-WHERE table_name = 'drivers'
-ORDER BY ordinal_position;]]></console>
+      <console name="Connection" type="STANDARD" schema="public" session="Main"><![CDATA[ALTER TABLE public.rides
+ADD COLUMN IF NOT EXISTS tip_amount INTEGER DEFAULT 0;]]></console>
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseEditorStateManager">
     <last-used-providers />
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
-    <open-files>
-      <object connection-id="3ebeac3a-3659-4ec2-92ec-f49edcb13d69" object-ref="consoles/Connection" />
-      <object connection-id="3ebeac3a-3659-4ec2-92ec-f49edcb13d69" object-ref="schemas/public/tables/drivers" />
-    </open-files>
+    <open-files />
   </component>
   <component name="DBNavigator.Project.DatabaseSessionManager">
-    <connection id="3ebeac3a-3659-4ec2-92ec-f49edcb13d69" />
+    <connection id="3ebeac3a-3659-4ec2-92ec-f49edcb13d69">
+      <session name="Session 1" id="348de560-57c4-485a-a924-5d8c3d941222" />
+    </connection>
   </component>
   <component name="DBNavigator.Project.DatasetFilterManager">
+    <filter-actions connection-id="3ebeac3a-3659-4ec2-92ec-f49edcb13d69" dataset="public.users" active-filter-id="" />
+    <filter-actions connection-id="3ebeac3a-3659-4ec2-92ec-f49edcb13d69" dataset="public.rides" active-filter-id="EMPTY_FILTER" />
     <filter-actions connection-id="3ebeac3a-3659-4ec2-92ec-f49edcb13d69" dataset="public.drivers" active-filter-id="d9cd2220-d3e6-4a78-8ccc-4a066056ce33">
       <filter id="d9cd2220-d3e6-4a78-8ccc-4a066056ce33" name="Filter" temporary="false" custom-name="false" type="basic" join-type="AND" />
     </filter-actions>
@@ -95,7 +112,7 @@ ORDER BY ordinal_position;]]></console>
           <session-user value="postgres" />
         </database>
         <properties>
-          <auto-commit value="false" />
+          <auto-commit value="true" />
         </properties>
         <ssh-settings>
           <active value="false" />
@@ -327,7 +344,7 @@ ORDER BY ordinal_position;]]></console>
         </content-types>
       </qualified-text-editor>
       <record-navigation>
-        <navigation-target value="VIEWER" />
+        <navigation-target value="EDITOR" />
       </record-navigation>
     </dataset-editor-settings>
     <code-editor-settings>
@@ -529,7 +546,7 @@ ORDER BY ordinal_position;]]></console>
         <uncommitted-changes>
           <on-project-close value="ASK" />
           <on-disconnect value="ASK" />
-          <on-autocommit-toggle value="ASK" />
+          <on-autocommit-toggle value="COMMIT" />
         </uncommitted-changes>
         <multiple-uncommitted-changes>
           <on-commit value="ASK" />
@@ -563,7 +580,7 @@ ORDER BY ordinal_position;]]></console>
       </extensions>
       <general>
         <lookup-ddl-files value="true" />
-        <create-ddl-files value="false" />
+        <create-ddl-files value="true" />
         <synchronize-ddl-files value="true" />
         <use-qualified-names value="false" />
         <make-scripts-rerunnable value="true" />

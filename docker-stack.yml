@@ -1,0 +1,71 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: flytaxi
+      POSTGRES_USER: flytaxi
+      POSTGRES_PASSWORD: flytaxi
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - backend
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+
+  api:
+    image: ivalexa111/flytaxi-api:latest
+    env_file:
+      - .env
+    environment:
+      DB_URL: postgres://flytaxi:flytaxi@db:5432/flytaxi?sslmode=disable
+      HTTP_PORT: "8080"
+    depends_on:
+      - db
+    networks:
+      - backend
+    deploy:
+      replicas: 2        # два экземпляра API
+      restart_policy:
+        condition: on-failure
+
+  frontend:
+    image: ivalexa111/flytaxi-frontend:latest
+    depends_on:
+      - api
+    ports:
+      - "8080:80"
+    networks:
+      - backend
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: on-failure
+
+  adminer:
+    image: adminer:4
+    depends_on:
+      - db
+    ports:
+      - "8081:8080"
+    networks:
+      - backend
+    deploy:
+      replicas: 1
+
+  redis:
+    image: redis:7-alpine
+    networks:
+      - backend
+    deploy:
+      replicas: 1
+
+volumes:
+  db_data:
+
+networks:
+  backend:
+    driver: overlay

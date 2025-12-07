@@ -27,7 +27,7 @@
 
     <div class="login-links">
         <a class="login-back" href="login.html">Уже есть аккаунт? Войти</a>
-        <a class="login-back" href="/index.html">← Назад на главную</a>
+        <a class="login-back" href="/">← Назад на главную</a>
     </div>
 </div>
 
@@ -60,7 +60,7 @@
         const json = await res.json();
 
         if (!res.ok) {
-          message.textContent = json.error || "Ошибка регистрации";
+          message.textContent = "Ошибка регистрации";
           message.style.color = "#ef4444";
           return;
         }

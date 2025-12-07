@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flytaxi-frontend
+  namespace: flytaxi
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: flytaxi-frontend
+  template:
+    metadata:
+      labels:
+        app: flytaxi-frontend
+    spec:
+      containers:
+        - name: frontend
+          image: ivalexa111/flytaxi-frontend:latest
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+  namespace: flytaxi
+spec:
+  type: LoadBalancer
+  selector:
+    app: flytaxi-frontend
+  ports:
+    - port: 80
+      targetPort: 80
