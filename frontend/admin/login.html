@@ -46,46 +46,63 @@
 </div>
 
 <script>
-    const form = document.getElementById("adminLoginForm");
-    const message = document.getElementById("adminLoginMessage");
+    document.addEventListener("DOMContentLoaded", () => {
+      const form = document.getElementById("adminLoginForm");
+      const message = document.getElementById("adminLoginMessage");
 
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-
-      const login = form.login.value.trim();
-      const password = form.password.value;
-
-      message.textContent = "Проверяем данные...";
-      message.style.color = "#e5e7eb";
-
+      // если уже залогинен как админ — сразу в админку
       try {
-        const res = await fetch("/api/admin/login", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ login, password })
-        });
-
-        const json = await res.json().catch(() => ({}));
-
-        if (!res.ok) {
-          message.textContent = json.error || "Ошибка авторизации";
-          message.style.color = "#ef4444";
+        const token = localStorage.getItem("ft_admin_access_token");
+        const user  = JSON.parse(localStorage.getItem("ft_admin_user") || "{}");
+        if (token && user && user.role === "admin") {
+          window.location.href = "/admin/";
           return;
         }
+      } catch (_) {}
 
-        message.textContent = "Успешный вход, перенаправляем...";
-        message.style.color = "#22c55e";
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
 
-        // пока без настоящих токенов — просто переходим в админку
-        setTimeout(() => {
-          window.location.href = "/admin/";
-        }, 800);
-      } catch (err) {
-        console.error(err);
-        message.textContent = "Ошибка сети при входе";
-        message.style.color = "#ef4444";
-      }
+        const login = form.login.value.trim();
+        const password = form.password.value;
+
+        message.textContent = "Проверяем данные...";
+        message.style.color = "#e5e7eb";
+
+        try {
+          const res = await fetch("/api/admin/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ login, password })
+          });
+
+          const json = await res.json().catch(() => ({}));
+          console.log("admin login response:", json);
+
+          if (!res.ok) {
+            message.textContent = json.error || "Ошибка авторизации";
+            message.style.color = "#ef4444";
+            return;
+          }
+
+          // сохраняем отдельные ключи для админа
+          localStorage.setItem("ft_admin_access_token", json.access_token);
+          localStorage.setItem("ft_admin_user", JSON.stringify(json.user));
+
+          message.textContent = "Успешный вход, перенаправляем...";
+          message.style.color = "#22c55e";
+
+          setTimeout(() => {
+            window.location.href = "/admin/";
+          }, 600);
+        } catch (err) {
+          console.error(err);
+          message.textContent = "Ошибка сети при входе";
+          message.style.color = "#ef4444";
+        }
+      });
     });
 </script>
+
 </body>
 </html>

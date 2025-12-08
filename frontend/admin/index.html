@@ -32,17 +32,58 @@
     const listEl = document.getElementById("driversList");
     const detailEl = document.getElementById("detailContent");
 
-    let currentDriverId = null;
+    const ADMIN_TOKEN_KEY = "ft_admin_access_token";
+    const ADMIN_USER_KEY  = "ft_admin_user";
+
+    // ----- работа с токеном -----
+
+    function getToken() {
+      return localStorage.getItem(ADMIN_TOKEN_KEY) || "";
+    }
+
+    function redirectToLogin() {
+      // на всякий случай всё очищаем
+      localStorage.removeItem(ADMIN_TOKEN_KEY);
+      localStorage.removeItem(ADMIN_USER_KEY);
+      window.location.href = "/admin/login.html";
+    }
+
+    function ensureTokenOrRedirect() {
+      const token = getToken();
+      if (!token) {
+        redirectToLogin();
+        return null;
+      }
+      return token;
+    }
+
+    function handle401() {
+      redirectToLogin();
+    }
+
+    // ----- API-запросы -----
 
     async function loadDrivers() {
+        const token = ensureTokenOrRedirect();
+        if (!token) return;
+
         statusEl.textContent = "Загружаем заявки...";
         statusEl.style.color = "#e5e7eb";
         listEl.innerHTML = "";
         detailEl.innerHTML = `<p class="login-info">Выберите заявку слева, чтобы увидеть подробности.</p>`;
 
         try {
-            const res  = await fetch("/api/admin/drivers/pending");
-            const json = await res.json();
+            const res  = await fetch("/api/admin/drivers/pending", {
+              headers: {
+                "Authorization": "Bearer " + token
+              }
+            });
+            const json = await res.json().catch(() => ({}));
+
+            if (res.status === 401) {
+              handle401();
+              return;
+            }
 
             if (!res.ok) {
                 statusEl.textContent = json.error || "Ошибка загрузки заявок";
@@ -82,9 +123,9 @@
     }
 
     async function openDriver(id) {
-        currentDriverId = id;
+        const token = ensureTokenOrRedirect();
+        if (!token) return;
 
-        // подсветка выбранного
         [...listEl.children].forEach(li => {
             li.classList.toggle("admin-list__item--active", li.dataset.id == id);
         });
@@ -92,8 +133,17 @@
         detailEl.innerHTML = "Загружаем данные...";
 
         try {
-            const res = await fetch(`/api/admin/drivers/${id}`);
-            const d   = await res.json();
+            const res = await fetch(`/api/admin/drivers/${id}`, {
+              headers: {
+                "Authorization": "Bearer " + token
+              }
+            });
+            const d   = await res.json().catch(() => ({}));
+
+            if (res.status === 401) {
+              handle401();
+              return;
+            }
 
             if (!res.ok) {
                 detailEl.innerHTML =
@@ -136,17 +186,15 @@
               </div>
             `;
 
-            // Если с бэка уже приходит driver_class — проставим его в select
             const classSelect = document.getElementById("driverClassSelect");
             if (d.driver_class && ["econom","business","comfort","kids"].includes(d.driver_class)) {
                 classSelect.value = d.driver_class;
             }
 
-            const approveBtn = document.getElementById("approveBtn");
-            const rejectBtn  = document.getElementById("rejectBtn");
-
-            approveBtn.addEventListener("click", () => approveDriver(id));
-            rejectBtn.addEventListener("click", () => rejectDriver(id));
+            document.getElementById("approveBtn")
+              .addEventListener("click", () => approveDriver(id));
+            document.getElementById("rejectBtn")
+              .addEventListener("click", () => rejectDriver(id));
 
         } catch (err) {
             console.error(err);
@@ -156,6 +204,9 @@
     }
 
     async function approveDriver(id) {
+        const token = ensureTokenOrRedirect();
+        if (!token) return;
+
         const cls = document.getElementById("driverClassSelect")?.value;
 
         if (!cls) {
@@ -169,12 +220,18 @@
             const res = await fetch(`/api/admin/drivers/${id}/approve`, {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + token
                 },
                 body: JSON.stringify({ driver_class: cls })
             });
 
-            const json = await res.json();
+            const json = await res.json().catch(() => ({}));
+
+            if (res.status === 401) {
+              handle401();
+              return;
+            }
 
             if (!res.ok) {
                 alert(json.error || "Ошибка при одобрении");
@@ -191,11 +248,24 @@
     }
 
     async function rejectDriver(id) {
+        const token = ensureTokenOrRedirect();
+        if (!token) return;
+
         if (!confirm("Отклонить эту заявку?")) return;
 
         try {
-            const res  = await fetch(`/api/admin/drivers/${id}/reject`, { method: "POST" });
-            const json = await res.json();
+            const res  = await fetch(`/api/admin/drivers/${id}/reject`, {
+              method: "POST",
+              headers: {
+                "Authorization": "Bearer " + token
+              }
+            });
+            const json = await res.json().catch(() => ({}));
+
+            if (res.status === 401) {
+              handle401();
+              return;
+            }
 
             if (!res.ok) {
                 alert(json.error || "Ошибка при отклонении");
@@ -211,7 +281,14 @@
         }
     }
 
-    loadDrivers();
+    // ----- старт -----
+
+    // если токена нет — выкинем на логин ещё до любых запросов
+    if (!getToken()) {
+      redirectToLogin();
+    } else {
+      loadDrivers();
+    }
 </script>
 
 <style>

@@ -13,8 +13,6 @@ services:
       - backend
     deploy:
       replicas: 1
-      placement:
-        constraints: [node.role == manager]
 
   api:
     image: ivalexa111/flytaxi-api:latest
@@ -23,34 +21,33 @@ services:
     environment:
       DB_URL: postgres://flytaxi:flytaxi@db:5432/flytaxi?sslmode=disable
       HTTP_PORT: "8080"
-    depends_on:
-      - db
+      JWT_SECRET: supersecretjwt
     networks:
       - backend
+    ports:
+      - "8081:8080"
     deploy:
-      replicas: 2        # два экземпляра API
+      replicas: 1
       restart_policy:
         condition: on-failure
 
+
+
   frontend:
     image: ivalexa111/flytaxi-frontend:latest
-    depends_on:
-      - api
     ports:
       - "8080:80"
     networks:
       - backend
     deploy:
-      replicas: 2
+      replicas: 1
       restart_policy:
         condition: on-failure
 
   adminer:
     image: adminer:4
-    depends_on:
-      - db
     ports:
-      - "8081:8080"
+      - "8082:8080"
     networks:
       - backend
     deploy:

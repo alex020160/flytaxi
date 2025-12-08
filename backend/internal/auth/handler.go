@@ -41,8 +41,19 @@ func (h *Handler) AdminLogin(c *gin.Context) {
         return
     }
 
+    token, err := h.jwt.Generate(-1, "admin")
+    if err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Не удалось выдать токен"})
+        return
+    }
+
     c.JSON(http.StatusOK, gin.H{
-        "message": "Добро пожаловать, администратор!",
+        "access_token": token,
+        "user": gin.H{
+            "id":    -1,
+            "role":  "admin",
+            "login": req.Login,
+        },
     })
 }
 
