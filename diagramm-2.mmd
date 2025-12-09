@@ -1,0 +1,18 @@
+flowchart TD
+
+    A[Push to master branch] --> B[Checkout repository]
+
+    B --> C[Setup Docker Buildx]
+    C --> D[Login to Docker Hub]
+
+    D --> E[Build and push backend image]
+    E --> F[Build and push frontend image]
+
+    F --> G{Deploy stage enabled?}
+
+    G --> |yes| H[Checkout repository]
+    H --> I[Install kubectl]
+    I --> J[Configure kubeconfig]
+    J --> K[Apply manifests: namespace, secret, postgres, api, frontend]
+
+    G --> |no| L[Deploy stage skipped]

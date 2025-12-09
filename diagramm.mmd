@@ -1,0 +1,74 @@
+flowchart LR
+
+%% ============================
+%% СТИЛИ
+%% ============================
+    classDef client fill:#e0f2fe,stroke:#0284c7,stroke-width:2px,color:#0c4a6e,font-weight:bold;
+    classDef net fill:#f0fdfa,stroke:#0d9488,stroke-width:3px,stroke-dasharray:7 4,color:#0f766e,font-weight:bold;
+    classDef web fill:#ffe4e6,stroke:#be123c,stroke-width:2px,color:#831843,font-weight:bold;
+    classDef app fill:#f0fdf4,stroke:#22c55e,stroke-width:2px,color:#064e3b,font-weight:bold;
+    classDef data fill:#fef9c3,stroke:#ca8a04,stroke-width:2px,color:#854d0e,font-weight:bold;
+    classDef admin fill:#ede9fe,stroke:#6d28d9,stroke-width:2px,color:#4c1d95,font-weight:bold;
+
+%% ============================
+%% КЛИЕНТЫ
+%% ============================
+    subgraph CLIENTS["Client applications"]
+        user_client(("Client<br/>browser"))
+        user_driver(("Driver<br/>browser"))
+        user_admin(("Admin<br/>browser"))
+    end
+    class user_client,user_driver,user_admin client;
+
+%% ============================
+%% ДОКЕР-СЕТЬ — БОЛЬШОЙ ОВАЛ
+%% ============================
+    subgraph DOCKER_NET["Docker overlay network: backend"]
+        network(("Docker network<br/>backend (overlay)")):::net
+
+    %% Контейнер фронтенда (nginx + статика)
+        frontend["Docker container<br/>Component: frontend (nginx)<br/>Image: custom (based on nginx:1.27-alpine)<br/>Replicas: 1<br/>Port: 80"]:::web
+
+    %% Контейнер бэкенда (API)
+        api["Docker container<br/>Component: backend API (Go / Gin)<br/>Image: backend service image (from docker-compose.yml)<br/>Replicas: 1<br/>Port: 8080"]:::app
+
+    %% База данных PostgreSQL
+        db["Docker container<br/>Component: PostgreSQL database<br/>Image: postgres:16-alpine<br/>Replicas: 1<br/>Port: 5432"]:::data
+
+    %% Кэш Redis
+        redis["Docker container<br/>Component: Redis cache<br/>Image: redis:7-alpine<br/>Replicas: 1<br/>Port: 6379"]:::data
+
+    %% Веб-интерфейс для БД
+        adminer["Docker container<br/>Component: DB admin (Adminer)<br/>Image: adminer (official)<br/>Replicas: 1<br/>Port: 8082"]:::admin
+    end
+
+%% ============================
+%% ПУТИ ЗАПРОСОВ
+%% ============================
+
+%% Клиенты → фронтенд
+    user_client -->|"HTTP :80<br/>запрос клиентских страниц"| frontend
+    user_driver -->|"HTTP :80<br/>запрос страниц водителя"| frontend
+    user_admin  -->|"HTTP :80<br/>запрос админ-интерфейса"| frontend
+
+%% Фронтенд → API
+    frontend -->|"Запрос API<br/>/api/*"| api
+
+%% API → БД (PostgreSQL)
+    api -->|"SQL-запросы (SELECT / INSERT)<br/>«Запрос данных»"| db
+    db -->|"Результаты SQL<br/>«Получение данных»"| api
+
+%% API ↔ Redis (кэш)
+    api -->|"Запрос к кэшу<br/>чтение/запись"| redis
+    redis -->|"Ответ из кэша"| api
+
+%% Adminer ↔ DB (администрирование БД)
+    user_admin -->|"HTTP :8082<br/>web-интерфейс Adminer"| adminer
+    adminer -->|"SQL-команды<br/>администрирование БД"| db
+
+%% Визуальные связи с сетью
+    frontend --- network
+    api --- network
+    db --- network
+    redis --- network
+    adminer --- network
